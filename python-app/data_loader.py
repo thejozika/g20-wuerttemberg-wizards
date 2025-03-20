@@ -96,7 +96,7 @@ TimeSeriesDataset = Dict[TimeSeriesYears, object]  # object shall be raster dict
 
 
 # You may have other typed structures; adjust these as needed.
-class DataStructure(TypedDict):
+class DataStructure:
     land_cover: TimeSeriesDataset  #Modis_Land_Cover_Data
     precipitation: TimeSeriesDataset  #Climate_Precipitation_Data
     gpp: TimeSeriesDataset  #MODIS_Gross_Primary_Production
@@ -239,12 +239,13 @@ def build_typed_structure(all_data: dict) -> DataStructure:
         streamwater=streamwater,
         main_road=main_road,
         assaba_region=assaba_region,
-        assaba_district=assaba_district,
+        assaba_district=assaba_district
     )
+
 
 
 def get_strucured_data() -> DataStructure:
     # Adjust the base_dir as needed
     base_dir = "../datasets"
     all_data = load_all_datasets(base_dir)
-    return build_typed_structure(all_data)
+    return  build_typed_structure(all_data)

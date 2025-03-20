@@ -3,28 +3,15 @@ from rasterio.plot import show
 import matplotlib
 matplotlib.use("TkAgg")
 import matplotlib.pyplot as plt
-from data_loader import load_raster_set
+from data_loader import get_strucured_data
 
 
 
 # Open your raster file
-data = load_raster_set('../datasets/Gridded_Population_Density_Data/Assaba_Pop_2010.tif')
+all_data = get_strucured_data()
+data = all_data.population_density_mrt.get('2021')
 # Create a figure and axis object
 fig, ax = plt.subplots(figsize=(10, 10))
 # Plot the raster data on the axis
-show(data["array"], ax=ax)
+show(data["array"],transform=data["meta"]["transform"], ax=ax, vmin=0)
 plt.show()
-
-
-
-import rasterio
-from rasterio.plot import show
-import matplotlib.pyplot as plt
-
-# Open your raster file
-with rasterio.open('../datasets/Gridded_Population_Density_Data/Assaba_Pop_2010.tif') as src:
-    # Create a figure and axis object
-    fig, ax = plt.subplots(figsize=(10, 10))
-    # Plot the raster data on the axis
-    show(src, ax=ax)
-    plt.show()

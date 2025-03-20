@@ -1,9 +1,7 @@
 import io
-
 import numpy as np
 import matplotlib
-
-matplotlib.use("TkAgg")
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import matplotlib.colors as mcolors
 from python_app.data_loader import common_grid, modis_land_raster_datastruct, modis_gpp_datastruct, \
@@ -114,3 +112,7 @@ def visualize_land_cutout(lon1, lat1, lon2, lat2, year=0):
     # Rewind the BytesIO buffer
     png_bytes.seek(0)
     return png_bytes
+
+
+if __name__ == '__main__':
+    visualize_land_cutout(-11.2843,16.9779,-12.3143,16.4229)

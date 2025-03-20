@@ -7,7 +7,7 @@ import matplotlib.colors as mcolors
 from python_app.data_loader import common_grid, modis_land_raster_datastruct, modis_gpp_datastruct, \
     climate_precipitation_datastruct, population_density_datastruct, glw_sheep_datastruct, glw_goat_datastruct, \
     glw_cattle_datastruct
-from python_app.analytics import reproject_overlay
+from python_app.analytics import reproject_overlay, analytics_data
 
 
 def replace_nodata_with_nan(array, nodata_val=65535.0):
@@ -26,7 +26,26 @@ def visualize(data: np.array, meta: dict, year: int):
     plt.show()
 
 
+def visualize_analytics_cutout(lon1, lat1, lon2, lat2, year=0):
+    data = analytics_data
+    max_val = np.nanmax(data)
+    # Reproject overlay
+    dst_array, dst_transform = reproject_overlay(
+        data,
+        lon1, lat1, lon2, lat2
+    )
+    fig, ax = plt.subplots(figsize=(16, 9))
+    ax.imshow(dst_array, cmap='plasma', vmax=max_val)
+    ax.set_axis_off()  # Remove axes, ticks, labels
 
+    # Save to in-memory buffer with no extra margins
+    png_bytes = io.BytesIO()
+    fig.savefig(png_bytes, format='png', bbox_inches='tight', pad_inches=0)
+    plt.close(fig)
+
+    # Rewind the BytesIO buffer
+    png_bytes.seek(0)
+    return png_bytes
 
 def visualize_gpp_cutout(lon1, lat1, lon2, lat2, year=0):
     data = modis_gpp_datastruct.array

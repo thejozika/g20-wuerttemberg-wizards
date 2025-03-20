@@ -1,9 +1,10 @@
 <script setup>
 import 'leaflet'
 import 'leaflet/dist/leaflet.css'
-import { onMounted } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 
 let map = null
+let LandType = null
 
 let currentPosition = 0
 
@@ -24,6 +25,8 @@ const positions = [
   },
 ]
 
+const year = ref(2023)
+
 const getCutoutUrl = (map) => {
   let base = '/backend'
 
@@ -36,7 +39,7 @@ const getCutoutUrl = (map) => {
   const lon2 = map.getBounds().getSouthEast().lng
   const lat2 = map.getBounds().getSouthEast().lat
 
-  return `${base}/cutout?lon1=${lon1}&lat1=${lat1}&lon2=${lon2}&lat2=${lat2}`
+  return `${base}/cutout/land?lon1=${lon1}&lat1=${lat1}&lon2=${lon2}&lat2=${lat2}&year=${year.value}`
 }
 
 onMounted(() => {
@@ -65,7 +68,7 @@ onMounted(() => {
     style: { color: 'blue', weight: 1 },
   })
 
-  const Cutout = L.imageOverlay(getCutoutUrl(map), map.getBounds(), {
+  LandType = L.imageOverlay(getCutoutUrl(map), map.getBounds(), {
     opacity: 0.5,
   })
 
@@ -94,7 +97,7 @@ onMounted(() => {
     })
 
   const overlayMaps = {
-    'Land Type': Cutout,
+    'Land Type': LandType,
     'Assaba Districts': Assaba_Districts_layer,
     'Assaba Region': Assaba_Region_layer,
     'Main Road': Main_Road,
@@ -106,9 +109,14 @@ onMounted(() => {
   map.on('moveend', (e) => {
     console.log(map.getBounds(), map.getCenter(), map.getZoom())
 
-    Cutout.setUrl(getCutoutUrl(map))
-    Cutout.setBounds(map.getBounds())
+    LandType.setUrl(getCutoutUrl(map))
+    LandType.setBounds(map.getBounds())
   })
+})
+
+watch(year, () => {
+  LandType.setUrl(getCutoutUrl(map))
+  LandType.setBounds(map.getBounds())
 })
 
 const nextPosition = (direction = 'next') => {
@@ -157,6 +165,7 @@ const years = [2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020,
         <label for="labels-range-input" class="sr-only">Labels range</label>
         <input
           id="labels-range-input"
+          v-model="year"
           type="range"
           value="2023"
           min="2010"

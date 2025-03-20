@@ -6,7 +6,6 @@ import { computed, onMounted, ref, watch } from 'vue'
 const emit = defineEmits(['pos'])
 
 import pos from '../assets/content_texts.json'
-import { setPosition } from 'leaflet/src/dom/DomUtil.js'
 
 let overlayMaps = {}
 
@@ -69,6 +68,10 @@ onMounted(() => {
     },
     position.value.zoom,
   )
+
+  map.setMaxBounds(L.latLngBounds(L.latLng(14, -15), L.latLng(19, -9)))
+  map.setMaxZoom(13)
+  map.setMinZoom(7)
 
   nextPosition('n', 0)
 
@@ -143,7 +146,7 @@ onMounted(() => {
   L.control.layers(null, overlayMaps, { collapsed: false }).addTo(map)
 
   map.on('moveend', (e) => {
-    console.log(map.getBounds(), map.getCenter(), map.getZoom())
+    console.log(map.getBounds().getNorthEast(), map.getCenter(), map.getZoom())
 
     Object.keys(cutout).forEach((t) => {
       if (!blockedCutouts.includes(t)) {

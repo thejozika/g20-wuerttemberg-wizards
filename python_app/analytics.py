@@ -4,7 +4,7 @@ from pyproj import Transformer
 from rasterio.transform import from_bounds
 from rasterio.warp import reproject, Resampling
 
-from python_app.data_loader import common_grid,population_density_datastruct,modis_land_raster_datastruct
+from python_app.data_loader import common_grid,population_density_datastruct,modis_land_raster_datastruct,modis_gpp_datastruct, glw_cattle_datastruct,glw_sheep_datastruct,glw_goat_datastruct
 
 def reproject_overlay(src_array, lon_1, lat_1, lon_2, lat_2, dst_width=854, dst_height=480):
     src_crs = common_grid["crs"]
@@ -83,41 +83,63 @@ def map_pop(array):
     cutout = np.where(array == 65535.0, np.nan, array)
     return np.where(cutout >= 60000, 0, cutout)
 
+kernel = np.array([
+    [0.5, 1, 0.5],
+    [1, 3, 1],
+    [0.5, 1, 0.5]
+])
+normalized_kernel = kernel / kernel.sum()
+
+wide_kernel = np.array([
+    [2, 2, 2],
+    [2, 3, 2],
+    [2, 2, 2]
+])
+expanded_kernel = np.kron(np.ones((6, 6)), wide_kernel)
 
 
+
+change_vegetation = convolve(map_land(modis_land_raster_datastruct.array[-1]), normalized_kernel, mode='constant', cval=0) - convolve(map_land(modis_land_raster_datastruct.array[1]), normalized_kernel, mode='constant', cval=0)
+change_vegetation[(change_vegetation >= -0.2) & (change_vegetation <= 0.2)] = np.nan
 
 def analyze_correlation(past_1, future_1, past_2, future_2):
-    kernel = np.array([
-        [0.5, 1, 0.5],
-        [1, 3, 1],
-        [0.5, 1, 0.5]
-    ])
-    normalized_kernel = kernel / kernel.sum()
 
     # Apply convolution
-    past_1_conv = convolve(past_1, normalized_kernel, mode='constant', cval=0)
-    future_1_conv = convolve(future_1, normalized_kernel, mode='constant', cval=0)
+    past_1_conv = convolve(past_1, expanded_kernel, mode='constant', cval=0)
+    future_1_conv = convolve(future_1, expanded_kernel, mode='constant', cval=0)
     past_2_conv = convolve(past_2, normalized_kernel, mode='constant', cval=0)
     future_2_conv = convolve(future_2, normalized_kernel, mode='constant', cval=0)
 
     # Calculate relative changes, normalized by maximum absolute difference
-    change_1 = future_1_conv - past_1_conv
-    change_2 = future_2_conv - past_2_conv
+    change1 = (future_1_conv - past_1_conv)
+    change2 = (future_2_conv - past_2_conv)
+    max_abs_1 = np.nanmax(np.abs(change1))
+    max_abs_2 = np.nanmax(np.abs(change2))
 
-    max_abs_1 = np.max(np.abs(change_1)) + 1e-8
-    max_abs_2 = np.max(np.abs(change_2)) + 1e-8
-
-    relative_change_1 = np.clip(change_1 / max_abs_1, -1, 1)
-    relative_change_2 = np.clip(change_2 / max_abs_2, -1, 1)
+    relative_change_1 = np.clip(change1 / max_abs_1, -1, 1)
+    relative_change_2 = np.clip(change2 / max_abs_2, -1, 1)
 
     # Multiply matrices element-wise and calculate anti-correlation
-    anti_correlation = (1 - (relative_change_1 * relative_change_2)) / 2
+    anti_correlation = relative_change_1 * relative_change_2
     return anti_correlation
 
-maped_pop_1 = map_pop(population_density_datastruct.array[0])
-maped_pop_2 = map_pop(population_density_datastruct.array[-1])
-maped_land_1 = map_land(modis_land_raster_datastruct.array[0])
-maped_land_2 = map_land(modis_land_raster_datastruct.array[-1])
-analytics_data = np.nan_to_num(analyze_correlation(maped_pop_1,maped_pop_2,maped_land_1,maped_land_2),nan=0)
+start= 0
+end=10
+
+maped_pop_1 = map_pop(population_density_datastruct.array[start])
+maped_pop_2 = map_pop(population_density_datastruct.array[end])
+maped_gpp_1 = map_pop(modis_gpp_datastruct.array[start])
+maped_gpp_2 = map_pop(modis_gpp_datastruct.array[end])
+maped_land_1 =map_land(modis_land_raster_datastruct.array[start])
+maped_land_2 =map_land(modis_land_raster_datastruct.array[end])
+maped_animals_1 = map_pop(glw_sheep_datastruct.array[start] + glw_goat_datastruct.array[start] + glw_cattle_datastruct.array[start])
+maped_animals_2 = map_pop(glw_sheep_datastruct.array[end] + glw_goat_datastruct.array[end] + glw_cattle_datastruct.array[end])
+
+animals_desertification = analyze_correlation(maped_land_1,maped_land_2,maped_animals_1,maped_animals_2)
+animals_desertification[ (animals_desertification <= 0.01)] = np.nan
+
+animal_gpp = analyze_correlation(maped_gpp_1,maped_gpp_2,maped_animals_1,maped_animals_2)
+animal_gpp[ (animal_gpp >= -0.01)] = np.nan
+
 
 print('analytics data calculated')

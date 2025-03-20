@@ -40,6 +40,7 @@ def load_and_convert_raster_dataset(dataset_path: str) -> dict:
             print(f"Error loading raster {tif}: {e}")
     return raster_layers
 
+
 def load_and_convert_raster_dataset_as_f32(dataset_path: str) -> dict:
     raster_layers = {}
     tif_files = glob.glob(os.path.join(dataset_path, "*.tif"))
@@ -262,6 +263,7 @@ class DataStruct:
         self.array = array
         self.dtype = dtype
 
+
 def extract_year_from_key(key: str) -> int:
     """
     Extract a 4-digit year from a string such as 'Assaba_Pop_2010.tif' or '2010R.tif'.
@@ -271,6 +273,7 @@ def extract_year_from_key(key: str) -> int:
     if not match:
         raise ValueError(f"Could not find a 4-digit year in the key: {key}")
     return int(match.group(1))
+
 
 def convert_standard_set(data: dict) -> DataStruct:
     sorted_years = sorted(data.keys())
@@ -348,18 +351,15 @@ def convert_standard_set_with_interpolation(
                 return arr1 + ratio * (arr2 - arr1)
 
         return year_dict[sorted_years[-1]]['array']
+
     yearly_arrays = []
     for y in range(start_year, end_year + 1):
         arr = get_array_for_year(y)
         yearly_arrays.append(arr)
     stacked_array = np.stack(yearly_arrays, axis=0)
 
-    return DataStruct(nodata=nodata, array=stacked_array,dtype=dtype)
+    return DataStruct(nodata=nodata, array=stacked_array, dtype=dtype)
 
-
-contents = os.listdir("./python_app/datasets/")
-for item in contents:
-    print(item)
 
 modis_land_dataset_path = "./python_app/datasets/Modis_Land_Cover_Data"
 modis_land_raster_layers = load_and_convert_raster_dataset(modis_land_dataset_path)
@@ -386,19 +386,22 @@ check_important_meta_consistency(population_density_raster_layers)
 population_density_datastruct = convert_standard_set_with_interpolation(population_density_raster_layers)
 
 glw_sheep_dataset_path = "./python_app/datasets/GLW_Sheep"
-glw_sheep_raster_layers = convert_all_raster_layers_to_common_grid(load_and_convert_raster_dataset(glw_sheep_dataset_path))
+glw_sheep_raster_layers = convert_all_raster_layers_to_common_grid(
+    load_and_convert_raster_dataset(glw_sheep_dataset_path))
 check_important_meta_consistency(glw_sheep_raster_layers)
 glw_sheep_datastruct = convert_standard_set_with_interpolation(glw_sheep_raster_layers)
 sheep_default_value = glw_sheep_datastruct.nodata
 glw_sheep_datastruct.array[modis_mask] = sheep_default_value
 
 glw_goat_dataset_path = "./python_app/datasets/GLW_Goats"
-glw_goat_raster_layers = convert_all_raster_layers_to_common_grid(load_and_convert_raster_dataset(glw_goat_dataset_path))
+glw_goat_raster_layers = convert_all_raster_layers_to_common_grid(
+    load_and_convert_raster_dataset(glw_goat_dataset_path))
 check_important_meta_consistency(glw_goat_raster_layers)
 glw_goat_datastruct = convert_standard_set_with_interpolation(glw_goat_raster_layers)
 
 glw_cattle_dataset_path = "./python_app/datasets/GLW_Cattle"
-glw_cattle_raster_layers = convert_all_raster_layers_to_common_grid(load_and_convert_raster_dataset(glw_cattle_dataset_path))
+glw_cattle_raster_layers = convert_all_raster_layers_to_common_grid(
+    load_and_convert_raster_dataset(glw_cattle_dataset_path))
 check_important_meta_consistency(glw_cattle_raster_layers)
 glw_cattle_datastruct = convert_standard_set_with_interpolation(glw_cattle_raster_layers)
 

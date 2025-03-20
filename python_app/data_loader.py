@@ -357,45 +357,47 @@ def convert_standard_set_with_interpolation(
     return DataStruct(nodata=nodata, array=stacked_array,dtype=dtype)
 
 
+contents = os.listdir("./datasets/")
+for item in contents:
+    print(item)
 
-
-modis_land_dataset_path = "../datasets/Modis_Land_Cover_Data"
+modis_land_dataset_path = "./datasets/Modis_Land_Cover_Data"
 modis_land_raster_layers = load_and_convert_raster_dataset(modis_land_dataset_path)
 check_important_meta_consistency(modis_land_raster_layers)
 modis_land_raster_datastruct = convert_modis_land_cover(modis_land_raster_layers)
 
 modis_mask = (modis_land_raster_datastruct.array == 255)
 
-modis_gpp_dataset_path = "../datasets/MODIS_Gross_Primary_Production_GPP"
+modis_gpp_dataset_path = "./datasets/MODIS_Gross_Primary_Production_GPP"
 modis_gpp_raster_layers = load_and_convert_raster_dataset_as_f32(modis_gpp_dataset_path)
 check_important_meta_consistency(modis_gpp_raster_layers)
 modis_gpp_datastruct = convert_standard_set(modis_gpp_raster_layers)
 
-climate_precipitation_dataset_path = "../datasets/Climate_Precipitation_Data"
+climate_precipitation_dataset_path = "./datasets/Climate_Precipitation_Data"
 climate_precipitation_raster_layers = convert_all_raster_layers_to_common_grid(
     load_and_convert_raster_dataset(climate_precipitation_dataset_path))
 check_important_meta_consistency(climate_precipitation_raster_layers)
 climate_precipitation_datastruct = convert_standard_set(climate_precipitation_raster_layers)
 
-population_density_dataset_path = "../datasets/Gridded_Population_Density_Data"
+population_density_dataset_path = "./datasets/Gridded_Population_Density_Data"
 population_density_raster_layers = convert_all_raster_layers_to_common_grid(
     load_and_convert_raster_dataset(population_density_dataset_path))
 check_important_meta_consistency(population_density_raster_layers)
 population_density_datastruct = convert_standard_set_with_interpolation(population_density_raster_layers)
 
-glw_sheep_dataset_path = "../datasets/GLW_Sheep"
+glw_sheep_dataset_path = "./datasets/GLW_Sheep"
 glw_sheep_raster_layers = convert_all_raster_layers_to_common_grid(load_and_convert_raster_dataset(glw_sheep_dataset_path))
 check_important_meta_consistency(glw_sheep_raster_layers)
 glw_sheep_datastruct = convert_standard_set_with_interpolation(glw_sheep_raster_layers)
 sheep_default_value = glw_sheep_datastruct.nodata
 glw_sheep_datastruct.array[modis_mask] = sheep_default_value
 
-glw_goat_dataset_path = "../datasets/GLW_Goats"
+glw_goat_dataset_path = "./datasets/GLW_Goats"
 glw_goat_raster_layers = convert_all_raster_layers_to_common_grid(load_and_convert_raster_dataset(glw_goat_dataset_path))
 check_important_meta_consistency(glw_goat_raster_layers)
 glw_goat_datastruct = convert_standard_set_with_interpolation(glw_goat_raster_layers)
 
-glw_cattle_dataset_path = "../datasets/GLW_Cattle"
+glw_cattle_dataset_path = "./datasets/GLW_Cattle"
 glw_cattle_raster_layers = convert_all_raster_layers_to_common_grid(load_and_convert_raster_dataset(glw_cattle_dataset_path))
 check_important_meta_consistency(glw_cattle_raster_layers)
 glw_cattle_datastruct = convert_standard_set_with_interpolation(glw_cattle_raster_layers)

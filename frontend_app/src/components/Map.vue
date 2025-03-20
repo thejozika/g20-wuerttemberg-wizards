@@ -182,8 +182,8 @@ watch(year, () => {
   })
 })
 
-const nextPosition = (direction = 'next', set) => {
-  if (set) {
+const nextPosition = (direction = 'next', set = undefined) => {
+  if (set !== undefined) {
     currentPosition.value = set
   } else {
     if (direction === 'next') {

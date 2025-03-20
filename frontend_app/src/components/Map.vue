@@ -24,6 +24,21 @@ const positions = [
   },
 ]
 
+const getCutoutUrl = (map) => {
+  let base = '/backend'
+
+  if (import.meta.env.DEV) {
+    base = 'http://localhost:8080/backend'
+  }
+
+  const lon1 = map.getBounds().getNorthWest().lng
+  const lat1 = map.getBounds().getNorthWest().lat
+  const lon2 = map.getBounds().getSouthEast().lng
+  const lat2 = map.getBounds().getSouthEast().lat
+
+  return `${base}/cutout?lon1=${lon1}&lat1=${lat1}&lon2=${lon2}&lat2=${lat2}`
+}
+
 onMounted(() => {
   map = L.map('map', {
     //dragging: false,
@@ -48,6 +63,10 @@ onMounted(() => {
 
   const Streamwater = L.geoJson(null, {
     style: { color: 'blue', weight: 1 },
+  })
+
+  const Cutout = L.imageOverlay(getCutoutUrl(map), map.getBounds(), {
+    opacity: 0.5,
   })
 
   fetch('/Assaba_Districts_layer.geojson')
@@ -75,6 +94,7 @@ onMounted(() => {
     })
 
   const overlayMaps = {
+    'Land Type': Cutout,
     'Assaba Districts': Assaba_Districts_layer,
     'Assaba Region': Assaba_Region_layer,
     'Main Road': Main_Road,
@@ -85,6 +105,9 @@ onMounted(() => {
 
   map.on('moveend', (e) => {
     console.log(map.getBounds(), map.getCenter(), map.getZoom())
+
+    Cutout.setUrl(getCutoutUrl(map))
+    Cutout.setBounds(map.getBounds())
   })
 })
 

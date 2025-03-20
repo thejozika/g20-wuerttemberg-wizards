@@ -20,12 +20,15 @@ let cutout = {
   goat: null,
   cattle: null,
   sheep: null,
+  analytics: null,
 
   Assaba_Districts_layer: null,
   Assaba_Region_layer: null,
   Main_Road: null,
   Streamwater: null,
 }
+
+const blockedCutouts = ['Assaba_Districts_layer', 'Assaba_Region_layer', 'Main_Road', 'Streamwater']
 
 const currentPosition = ref(0)
 
@@ -91,9 +94,11 @@ onMounted(() => {
   })
 
   Object.keys(cutout).forEach((t) => {
-    cutout[t] = L.imageOverlay(getCutoutUrl(map, t), map.getBounds(), {
-      opacity: 0.5,
-    })
+    if (!blockedCutouts.includes(t)) {
+      cutout[t] = L.imageOverlay(getCutoutUrl(map, t), map.getBounds(), {
+        opacity: 0.5,
+      })
+    }
   })
 
   fetch('/Assaba_Districts_layer.geojson')
@@ -128,6 +133,7 @@ onMounted(() => {
     Sheep: cutout.sheep,
     Population: cutout.population,
     Precipitation: cutout.precipitation,
+    Analytics: cutout.analytics,
     'Assaba Districts': cutout.Assaba_Districts_layer,
     'Assaba Region': cutout.Assaba_Region_layer,
     'Main Road': cutout.Main_Road,
@@ -140,16 +146,20 @@ onMounted(() => {
     console.log(map.getBounds(), map.getCenter(), map.getZoom())
 
     Object.keys(cutout).forEach((t) => {
-      cutout[t].setUrl(getCutoutUrl(map, t))
-      cutout[t].setBounds(map.getBounds())
+      if (!blockedCutouts.includes(t)) {
+        cutout[t].setUrl(getCutoutUrl(map, t))
+        cutout[t].setBounds(map.getBounds())
+      }
     })
   })
 })
 
 watch(year, () => {
   Object.keys(cutout).forEach((t) => {
-    cutout[t].setUrl(getCutoutUrl(map, t))
-    cutout[t].setBounds(map.getBounds())
+    if (!blockedCutouts.includes(t)) {
+      cutout[t].setUrl(getCutoutUrl(map, t))
+      cutout[t].setBounds(map.getBounds())
+    }
   })
 })
 
@@ -197,7 +207,7 @@ const nextPosition = (direction = 'next', set) => {
         map.addLayer(cutout[l])
       }
     })
-  }, 1000)
+  }, 750)
 }
 
 const play = async () => {

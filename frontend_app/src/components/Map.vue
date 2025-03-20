@@ -48,7 +48,7 @@ const getCutoutUrl = (map, type) => {
   let base = '/backend'
 
   if (import.meta.env.DEV) {
-    base = 'http://localhost:8080/backend'
+    base = 'http://localhost:8081/backend'
   }
 
   const lon1 = map.getBounds().getNorthWest().lng

@@ -6,7 +6,7 @@ services:
       context: frontend_app
       dockerfile: Dockerfile
     ports:
-      - "8080:80"
+      - "8081:80"
   backend:
     build:
       context: python_app

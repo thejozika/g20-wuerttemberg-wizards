@@ -26,6 +26,8 @@ def visualize(data: np.array, meta: dict, year: int):
     plt.show()
 
 
+
+
 def visualize_gpp_cutout(lon1, lat1, lon2, lat2, year=0):
     data = modis_gpp_datastruct.array
     meta = common_grid.copy()
@@ -41,7 +43,7 @@ def visualize_gpp_cutout(lon1, lat1, lon2, lat2, year=0):
     # Replace nodata
 
     fig, ax = plt.subplots(figsize=(16, 9))
-    ax.imshow(data_nan, cmap='BuGn', vmax=max_val)
+    ax.imshow(dst_array, cmap='BuGn', vmax=max_val)
     ax.set_axis_off()  # Remove axes, ticks, labels
 
     # Save to in-memory buffer with no extra margins
@@ -70,6 +72,7 @@ def visualize_land_cutout(lon1, lat1, lon2, lat2, year=0):
     )
     # Replace nodata
     data_nan = replace_nodata_with_nan(dst_array, nodata_val=meta['nodata'])
+    meta['transform'] = dst_transform
 
     # Define categorical classes (example)
     classes = {
@@ -110,6 +113,127 @@ def visualize_land_cutout(lon1, lat1, lon2, lat2, year=0):
     plt.close(fig)
 
     # Rewind the BytesIO buffer
+    png_bytes.seek(0)
+    return png_bytes
+
+
+# Climate Precipitation
+def visualize_precipitation_cutout(lon1, lat1, lon2, lat2, year=0):
+    data = climate_precipitation_datastruct.array
+    meta = common_grid.copy()
+    meta['dtype'] = climate_precipitation_datastruct.dtype
+    meta['nodata'] = climate_precipitation_datastruct.nodata
+    data_nan = np.where(data == meta['nodata'], np.nan, data)
+    max_val = np.nanmax(data_nan)
+
+    dst_array, dst_transform = reproject_overlay(
+        data_nan[year], lon1, lat1, lon2, lat2
+    )
+
+    fig, ax = plt.subplots(figsize=(16, 9))
+    ax.imshow(dst_array, cmap='Blues', vmax=max_val)
+    ax.set_axis_off()
+
+    png_bytes = io.BytesIO()
+    fig.savefig(png_bytes, format='png', bbox_inches='tight', pad_inches=0)
+    plt.close(fig)
+
+    png_bytes.seek(0)
+    return png_bytes
+
+# Population Density
+def visualize_population_density_cutout(lon1, lat1, lon2, lat2, year=0):
+    data = population_density_datastruct.array
+    meta = common_grid.copy()
+    meta['dtype'] = population_density_datastruct.dtype
+    meta['nodata'] = population_density_datastruct.nodata
+    data_nan = np.where(data == meta['nodata'], np.nan, data)
+    max_val = np.nanmax(data_nan)
+
+    dst_array, dst_transform = reproject_overlay(
+        data_nan[year], lon1, lat1, lon2, lat2
+    )
+
+    fig, ax = plt.subplots(figsize=(16, 9))
+    ax.imshow(dst_array, cmap='OrRd', vmax=max_val)
+    ax.set_axis_off()
+
+    png_bytes = io.BytesIO()
+    fig.savefig(png_bytes, format='png', bbox_inches='tight', pad_inches=0)
+    plt.close(fig)
+
+    png_bytes.seek(0)
+    return png_bytes
+
+# GLW Sheep
+def visualize_glw_sheep_cutout(lon1, lat1, lon2, lat2, year=0):
+    data = glw_sheep_datastruct.array
+    meta = common_grid.copy()
+    meta['dtype'] = glw_sheep_datastruct.dtype
+    meta['nodata'] = glw_sheep_datastruct.nodata
+    data_nan = np.where(data == meta['nodata'], np.nan, data)
+    max_val = np.nanmax(data_nan)
+
+    dst_array, dst_transform = reproject_overlay(
+        data_nan[year], lon1, lat1, lon2, lat2
+    )
+
+    fig, ax = plt.subplots(figsize=(16, 9))
+    ax.imshow(dst_array, cmap='Purples', vmax=max_val)
+    ax.set_axis_off()
+
+    png_bytes = io.BytesIO()
+    fig.savefig(png_bytes, format='png', bbox_inches='tight', pad_inches=0)
+    plt.close(fig)
+
+    png_bytes.seek(0)
+    return png_bytes
+
+# GLW Goat
+def visualize_glw_goat_cutout(lon1, lat1, lon2, lat2, year=0):
+    data = glw_goat_datastruct.array
+    meta = common_grid.copy()
+    meta['dtype'] = glw_goat_datastruct.dtype
+    meta['nodata'] = glw_goat_datastruct.nodata
+    data_nan = np.where(data == meta['nodata'], np.nan, data)
+    max_val = np.nanmax(data_nan)
+
+    dst_array, dst_transform = reproject_overlay(
+        data_nan[year], lon1, lat1, lon2, lat2
+    )
+
+    fig, ax = plt.subplots(figsize=(16, 9))
+    ax.imshow(dst_array, cmap='Greys', vmax=max_val)
+    ax.set_axis_off()
+
+    png_bytes = io.BytesIO()
+    fig.savefig(png_bytes, format='png', bbox_inches='tight', pad_inches=0)
+    plt.close(fig)
+
+    png_bytes.seek(0)
+    return png_bytes
+
+# GLW Cattle
+def visualize_glw_cattle_cutout(lon1, lat1, lon2, lat2, year=0):
+    data = glw_cattle_datastruct.array
+    meta = common_grid.copy()
+    meta['dtype'] = glw_cattle_datastruct.dtype
+    meta['nodata'] = glw_cattle_datastruct.nodata
+    data_nan = np.where(data == meta['nodata'], np.nan, data)
+    max_val = np.nanmax(data_nan)
+
+    dst_array, dst_transform = reproject_overlay(
+        data_nan[year], lon1, lat1, lon2, lat2
+    )
+
+    fig, ax = plt.subplots(figsize=(16, 9))
+    ax.imshow(dst_array, cmap='YlOrBr', vmax=max_val)
+    ax.set_axis_off()
+
+    png_bytes = io.BytesIO()
+    fig.savefig(png_bytes, format='png', bbox_inches='tight', pad_inches=0)
+    plt.close(fig)
+
     png_bytes.seek(0)
     return png_bytes
 

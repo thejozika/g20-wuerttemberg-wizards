@@ -90,7 +90,7 @@ def visualize_land_cutout(lon1, lat1, lon2, lat2, year=0):
         14: ("Cropland/Natural Vegetation", "#00FFFF"),
         15: ("Snow and Ice", "#ffffff"),
         16: ("Barren or sparsely vegetated", "#FFFFAA"),
-        17: ("Fill Value/Unclassified", "#000000")
+        17: ("Fill Value/Unclassified", "#00000000")
     }
 
     sorted_keys = sorted(classes.keys())

@@ -2,6 +2,7 @@ import io
 
 import numpy as np
 import matplotlib
+
 matplotlib.use("TkAgg")
 import matplotlib.pyplot as plt
 import matplotlib.colors as mcolors
@@ -15,7 +16,6 @@ def replace_nodata_with_nan(array, nodata_val=65535.0):
     #return  for the fucking other modis set
     return np.where(array == nodata_val, np.nan, array)
 
-
 def visualize(data: np.array, meta: dict, year: int):
     data_nan = replace_nodata_with_nan(data, nodata_val=meta['nodata'])
 
@@ -28,23 +28,35 @@ def visualize(data: np.array, meta: dict, year: int):
     plt.show()
 
 
-def visualize_land_cutout(lon1, lat1, lon2, lat2):
-    data = modis_land_raster_datastruct.array
+def visualize_gpp_cutout(lon1, lat1, lon2, lat2, year=0):
+    data = modis_gpp_datastruct.array
     meta = common_grid.copy()
-    meta['dtype'] = modis_land_raster_datastruct.dtype
-    meta['nodata'] = modis_land_raster_datastruct.nodata
+    meta['dtype'] = modis_gpp_datastruct.dtype
+    meta['nodata'] = modis_gpp_datastruct.nodata
+    data_nan = np.where(data >= 6500, np.nan, data)
+    max_val = np.nanmax(data_nan)
     # Reproject overlay
     dst_array, dst_transform = reproject_overlay(
-        data,
-        meta,
-        lon1, lat1, lon2, lat2,
-        dst_width=854,
-        dst_height=480
+        data_nan[year],
+        lon1, lat1, lon2, lat2
     )
     # Replace nodata
-    data_nan = np.where(data >= 6500, np.nan, data)
 
-def visualize_land_cutout(lon1, lat1, lon2, lat2):
+    fig, ax = plt.subplots(figsize=(16, 9))
+    ax.imshow(data_nan, cmap='BuGn', vmax=max_val)
+    ax.set_axis_off()  # Remove axes, ticks, labels
+
+    # Save to in-memory buffer with no extra margins
+    png_bytes = io.BytesIO()
+    fig.savefig(png_bytes, format='png', bbox_inches='tight', pad_inches=0)
+    plt.close(fig)
+
+    # Rewind the BytesIO buffer
+    png_bytes.seek(0)
+    return png_bytes
+
+
+def visualize_land_cutout(lon1, lat1, lon2, lat2, year=0):
     """
     Perform the cutout and return a PNG bytes object, with only the image shown.
     """
@@ -55,27 +67,24 @@ def visualize_land_cutout(lon1, lat1, lon2, lat2):
 
     # Reproject overlay
     dst_array, dst_transform = reproject_overlay(
-        data,
-        meta,
+        data[year],
         lon1, lat1, lon2, lat2,
-        dst_width=854,
-        dst_height=480
     )
     # Replace nodata
     data_nan = replace_nodata_with_nan(dst_array, nodata_val=meta['nodata'])
 
     # Define categorical classes (example)
     classes = {
-        0:  ("Water", "#1f78b4"),
-        1:  ("Evergreen Needleleaf Forest", "#33a02c"),
-        2:  ("Evergreen Broadleaf Forest", "#b2df8a"),
-        3:  ("Deciduous Needleleaf Forest", "#006400"),
-        4:  ("Deciduous Broadleaf Forest", "#8dd3c7"),
-        5:  ("Mixed Forest", "#ffffb3"),
-        6:  ("Closed Shrublands", "#8B4513"),
-        7:  ("Open Shrublands", "#bc8f8f"),
-        8:  ("Woody Savannas", "#d9d9d9"),
-        9:  ("Savannas", "#fdbf6f"),
+        0: ("Water", "#1f78b4"),
+        1: ("Evergreen Needleleaf Forest", "#33a02c"),
+        2: ("Evergreen Broadleaf Forest", "#b2df8a"),
+        3: ("Deciduous Needleleaf Forest", "#006400"),
+        4: ("Deciduous Broadleaf Forest", "#8dd3c7"),
+        5: ("Mixed Forest", "#ffffb3"),
+        6: ("Closed Shrublands", "#8B4513"),
+        7: ("Open Shrublands", "#bc8f8f"),
+        8: ("Woody Savannas", "#d9d9d9"),
+        9: ("Savannas", "#fdbf6f"),
         10: ("Grasslands", "#55FF55"),
         11: ("Permanent Wetlands", "#1ecbe1"),
         12: ("Croplands", "#00FFFF"),
@@ -93,7 +102,7 @@ def visualize_land_cutout(lon1, lat1, lon2, lat2):
     norm = mcolors.BoundaryNorm(boundaries, cmap.N)
 
     # Create figure in memory
-    fig, ax = plt.subplots(figsize=(8, 6))
+    fig, ax = plt.subplots(figsize=(16, 9))
     ax.imshow(data_nan, cmap=cmap, norm=norm)
     ax.set_axis_off()  # Remove axes, ticks, labels
 

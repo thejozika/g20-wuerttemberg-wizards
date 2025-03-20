@@ -22,7 +22,7 @@ def load_vector_dataset(shp_path_name: str) -> gpd.GeoDataFrame:
 
 
 #ALL dataset have only one band
-def load_and_convert_raster_dataset(dataset_path: str, target_dtype: str = 'float32',
+def load_and_convert_raster_dataset(dataset_path: str,
                                     fix_nodata: bool = False, explicit_nodata_val=None) -> dict:
     raster_layers = {}
     tif_files = glob.glob(os.path.join(dataset_path, "*.tif"))
@@ -30,9 +30,8 @@ def load_and_convert_raster_dataset(dataset_path: str, target_dtype: str = 'floa
         base_name = os.path.splitext(os.path.basename(tif))[0]
         try:
             with rasterio.open(tif) as src:
-                array = src.read(1)#.astype(target_dtype)
+                array = src.read(1)
                 meta = src.meta.copy()
-                #meta['dtype'] = target_dtype
 
             raster_layers[base_name] = {"array": array, "meta": meta}
         except Exception as e:
@@ -186,7 +185,7 @@ def convert_all_raster_layers_to_common_grid(raster_layers: dict, resampling_met
 
 # Example usage:
 modis_land_dataset_path = "../datasets/Modis_Land_Cover_Data"
-modis_land_raster_layers = load_and_convert_raster_dataset(modis_land_dataset_path, target_dtype='uint8')
+modis_land_raster_layers = load_and_convert_raster_dataset(modis_land_dataset_path)
 check_important_meta_consistency(modis_land_raster_layers)
 
 modis_gpp_dataset_path = "../datasets/MODIS_Gross_Primary_Production_GPP"
@@ -194,7 +193,7 @@ modis_gpp_raster_layers = load_and_convert_raster_dataset(modis_gpp_dataset_path
 check_important_meta_consistency(modis_gpp_raster_layers)
 
 climate_precipitation_dataset_path = "../datasets/Climate_Precipitation_Data"
-climate_precipitation_raster_layers = convert_all_raster_layers_to_common_grid(load_and_convert_raster_dataset(climate_precipitation_dataset_path,fix_nodata=True,explicit_nodata_val=65535.0))
+climate_precipitation_raster_layers = convert_all_raster_layers_to_common_grid(load_and_convert_raster_dataset(climate_precipitation_dataset_path))
 check_important_meta_consistency(climate_precipitation_raster_layers)
 
 
@@ -202,5 +201,4 @@ population_density_dataset_path = "../datasets/Gridded_Population_Density_Data"
 population_density_raster_layers = convert_all_raster_layers_to_common_grid(load_and_convert_raster_dataset(population_density_dataset_path))
 check_important_meta_consistency(population_density_raster_layers)
 
-#print(next(iter(dl.modis_land_raster_layers.values()))["meta"])
-#print(next(iter(dl.climate_precipitation_raster_layers.values()))["meta"])
+#print(dl.modis_land_raster_layers['2010LCT']["meta"])

@@ -1,3 +1,4 @@
+import math
 import os
 import glob
 import re
@@ -25,8 +26,7 @@ def load_vector_dataset(shp_path_name: str) -> gpd.GeoDataFrame:
 
 
 #ALL dataset have only one band
-def load_and_convert_raster_dataset(dataset_path: str,
-                                    fix_nodata: bool = False, explicit_nodata_val=None) -> dict:
+def load_and_convert_raster_dataset(dataset_path: str) -> dict:
     raster_layers = {}
     tif_files = glob.glob(os.path.join(dataset_path, "*.tif"))
     for tif in tif_files:
@@ -35,58 +35,127 @@ def load_and_convert_raster_dataset(dataset_path: str,
             with rasterio.open(tif) as src:
                 array = src.read(1)
                 meta = src.meta.copy()
+            raster_layers[base_name] = {"array": array, "meta": meta}
+        except Exception as e:
+            print(f"Error loading raster {tif}: {e}")
+    return raster_layers
 
+def load_and_convert_raster_dataset_as_f32(dataset_path: str) -> dict:
+    raster_layers = {}
+    tif_files = glob.glob(os.path.join(dataset_path, "*.tif"))
+    for tif in tif_files:
+        base_name = os.path.splitext(os.path.basename(tif))[0]
+        try:
+            with rasterio.open(tif) as src:
+                array = src.read(1).astype(np.float32)
+                meta = src.meta.copy()
+                meta.update(dtype="float32")
             raster_layers[base_name] = {"array": array, "meta": meta}
         except Exception as e:
             print(f"Error loading raster {tif}: {e}")
     return raster_layers
 
 
-def check_important_meta_consistency(raster_layers: dict, keys=["crs", "transform", "width", "height"]) -> bool:
+def check_important_meta_consistency(raster_layers: dict, keys=["crs", "transform", "width", "height"],
+                                     eps=1e-9) -> bool:
     """
     Check if the important metadata are consistent across all raster files.
     Only the keys provided in 'keys' will be compared.
 
-    Parameters:
-    - raster_layers: A dict mapping raster names to their data and metadata.
-    - keys: List of metadata keys to compare (default: CRS, transform, width, height).
+    'eps' sets the floating-point tolerance when comparing transform parameters.
 
-    Returns:
-    - True if all files have the same important metadata, False otherwise.
+    Parameters
+    ----------
+    raster_layers : dict
+        A dict mapping raster names to their data and metadata.
+    keys : list of str
+        The metadata keys to compare.
+    eps : float
+        Tolerance for comparing floating-point transform parameters.
+
+    Returns
+    -------
+    bool
+        True if all files have the same important metadata, False otherwise.
     """
     if not raster_layers:
         print("No raster files loaded.")
         return True
 
-    # Use the metadata of the first raster as the reference.
-    ref_meta = next(iter(raster_layers.values()))["meta"]
-
+    # --- Helper to build a standardized dict that allows "fuzzy" compare for float transforms. ---
     def standardize(meta):
-        standardized = {}
-        for key in keys:
-            if key not in meta:
+        std = {}
+        for k in keys:
+            if k not in meta:
                 continue
-            if key == "crs" and meta[key] is not None:
-                # Convert CRS to its WKT string for comparison.
-                standardized[key] = meta[key].to_wkt()
-            elif key == "transform" and meta[key] is not None:
-                # Convert the affine transform to a tuple.
-                standardized[key] = tuple(meta[key])
+            value = meta[k]
+            if k == "crs" and value is not None:
+                # Convert CRS to its WKT string for comparison
+                # (assuming value is already a rasterio CRS object or WKT string)
+                # If it's a rasterio CRS, you might do: value = value.to_wkt()
+                # If it's already a string, that might be enough
+                if hasattr(value, "to_wkt"):
+                    value = value.to_wkt()
+                std[k] = value
+            elif k == "transform" and value is not None:
+                # Convert transform to a tuple of floats
+                # We'll store them as-is (floats), but we won't directly
+                # compare them as `==` later; we do a tolerance check
+                std[k] = tuple(value)
             else:
-                standardized[key] = meta[key]
-        return standardized
+                # width, height, or other keys can be used as-is
+                std[k] = value
+        return std
 
-    ref_standard = standardize(ref_meta)
+    # Get the first raster's metadata to compare against
+    first_name, first_data = next(iter(raster_layers.items()))
+    ref_meta = standardize(first_data["meta"])
 
+    # --- Now check each subsequent raster ---
     for name, data in raster_layers.items():
-        curr_standard = standardize(data["meta"])
-        if curr_standard != ref_standard:
+        curr_meta = standardize(data["meta"])
+        if not _compare_meta_dicts(ref_meta, curr_meta, eps=eps):
             print(f"Inconsistent metadata found in file: {name}")
-            print("Reference:", ref_standard)
-            print("Current  :", curr_standard)
+            print("Reference:", ref_meta)
+            print("Current  :", curr_meta)
             return False
 
     print("All important metadata are consistent.")
+    return True
+
+
+def _compare_meta_dicts(ref_meta, curr_meta, eps=1e-9) -> bool:
+    """
+    Compare two standardized metadata dicts with possible float transforms.
+    Returns True if they are effectively the same within tolerance.
+    """
+    # Check that they have the same keys
+    if ref_meta.keys() != curr_meta.keys():
+        return False
+
+    # Compare values
+    for k in ref_meta:
+        ref_val = ref_meta[k]
+        curr_val = curr_meta[k]
+
+        # If either is None, direct compare
+        if ref_val is None or curr_val is None:
+            if ref_val != curr_val:
+                return False
+
+        # For the transform, compare float-by-float with tolerance
+        elif k == "transform":
+            if len(ref_val) != len(curr_val):
+                return False
+            for rv, cv in zip(ref_val, curr_val):
+                if not math.isclose(rv, cv, abs_tol=eps):
+                    return False
+
+        # For the CRS (strings) or for width/height (ints), direct compare
+        else:
+            if ref_val != curr_val:
+                return False
+
     return True
 
 
@@ -186,11 +255,12 @@ def convert_all_raster_layers_to_common_grid(raster_layers: dict, resampling_met
 class DataStruct:
     nodata: Union[int, float]
     array: np.ndarray
+    dtype: np.dtype
 
-    def __init__(self, nodata: Union[int, float], array: np.ndarray):
-        # Set the array dtype based on the type of nodata
+    def __init__(self, nodata: Union[int, float], array: np.ndarray, dtype: np.dtype):
         self.nodata = nodata
         self.array = array
+        self.dtype = dtype
 
 def extract_year_from_key(key: str) -> int:
     """
@@ -205,7 +275,8 @@ def extract_year_from_key(key: str) -> int:
 def convert_standard_set(data: dict) -> DataStruct:
     sorted_years = sorted(data.keys())
     first_year = sorted_years[0]
-    nodata = data[first_year]['meta']['modata']
+    nodata = data[first_year]['meta']['nodata']
+    dtype = data[first_year]['meta']['dtype']
 
     # Dynamically sort keys to ensure chronological order
     arrays = []
@@ -213,7 +284,7 @@ def convert_standard_set(data: dict) -> DataStruct:
         arrays.append(data[year]['array'])
     #Stack arrays along a new axis (0) to create a 3D array [year, rows, columns]
     stacked_array = np.stack(arrays, axis=0)
-    return DataStruct(nodata, stacked_array)
+    return DataStruct(nodata, stacked_array, dtype)
 
 
 def convert_modis_land_cover(data: dict) -> DataStruct:
@@ -230,7 +301,7 @@ def convert_modis_land_cover(data: dict) -> DataStruct:
     stacked_array = np.stack(arrays, axis=0)
 
     # Now the unified nodata is 255
-    return DataStruct(nodata=255, array=stacked_array)
+    return DataStruct(nodata=255, array=stacked_array, dtype=np.uint8)
 
 
 def convert_standard_set_with_interpolation(
@@ -251,6 +322,7 @@ def convert_standard_set_with_interpolation(
     sorted_years = sorted(year_dict.keys())
 
     nodata = year_dict[sorted_years[0]]['meta']['nodata']
+    dtype = year_dict[sorted_years[0]]['meta']['dtype']
 
     def get_array_for_year(y: int) -> np.ndarray:
         if y in year_dict:
@@ -282,7 +354,7 @@ def convert_standard_set_with_interpolation(
         yearly_arrays.append(arr)
     stacked_array = np.stack(yearly_arrays, axis=0)
 
-    return DataStruct(nodata=nodata, array=stacked_array)
+    return DataStruct(nodata=nodata, array=stacked_array,dtype=dtype)
 
 
 
@@ -292,10 +364,12 @@ modis_land_raster_layers = load_and_convert_raster_dataset(modis_land_dataset_pa
 check_important_meta_consistency(modis_land_raster_layers)
 modis_land_raster_datastruct = convert_modis_land_cover(modis_land_raster_layers)
 
+modis_mask = (modis_land_raster_datastruct.array == 255)
+
 modis_gpp_dataset_path = "../datasets/MODIS_Gross_Primary_Production_GPP"
-modis_gpp_raster_layers = load_and_convert_raster_dataset(modis_gpp_dataset_path)
+modis_gpp_raster_layers = load_and_convert_raster_dataset_as_f32(modis_gpp_dataset_path)
 check_important_meta_consistency(modis_gpp_raster_layers)
-modis_gdp_datastruct = convert_standard_set(modis_gpp_raster_layers)
+modis_gpp_datastruct = convert_standard_set(modis_gpp_raster_layers)
 
 climate_precipitation_dataset_path = "../datasets/Climate_Precipitation_Data"
 climate_precipitation_raster_layers = convert_all_raster_layers_to_common_grid(
@@ -307,6 +381,23 @@ population_density_dataset_path = "../datasets/Gridded_Population_Density_Data"
 population_density_raster_layers = convert_all_raster_layers_to_common_grid(
     load_and_convert_raster_dataset(population_density_dataset_path))
 check_important_meta_consistency(population_density_raster_layers)
-population_density_dataset = convert_standard_set_with_interpolation(population_density_raster_layers)
+population_density_datastruct = convert_standard_set_with_interpolation(population_density_raster_layers)
+
+glw_sheep_dataset_path = "../datasets/GLW_Sheep"
+glw_sheep_raster_layers = convert_all_raster_layers_to_common_grid(load_and_convert_raster_dataset(glw_sheep_dataset_path))
+check_important_meta_consistency(glw_sheep_raster_layers)
+glw_sheep_datastruct = convert_standard_set_with_interpolation(glw_sheep_raster_layers)
+sheep_default_value = glw_sheep_datastruct.nodata
+glw_sheep_datastruct.array[modis_mask] = sheep_default_value
+
+glw_goat_dataset_path = "../datasets/GLW_Goats"
+glw_goat_raster_layers = convert_all_raster_layers_to_common_grid(load_and_convert_raster_dataset(glw_goat_dataset_path))
+check_important_meta_consistency(glw_goat_raster_layers)
+glw_goat_datastruct = convert_standard_set_with_interpolation(glw_goat_raster_layers)
+
+glw_cattle_dataset_path = "../datasets/GLW_Cattle"
+glw_cattle_raster_layers = convert_all_raster_layers_to_common_grid(load_and_convert_raster_dataset(glw_cattle_dataset_path))
+check_important_meta_consistency(glw_cattle_raster_layers)
+glw_cattle_datastruct = convert_standard_set_with_interpolation(glw_cattle_raster_layers)
 
 #print(dl.modis_land_raster_layers['2010LCT']["meta"])

@@ -1,13 +1,9 @@
-from fastapi import FastAPI, HTTPException
-from shapely.geometry import box
-from app.models import AreaQuery, DataResponse, PixelData, VectorData
-from app.data_loader import load_all_data
+import uvicorn
+from fastapi.openapi.models import Response
+from fastapi import FastAPI
 
-# Path to your base data folder in the G-20 project
-DATA_BASE_DIR = "./data"
+from python_app.visualizer import visualize_land_cutout
 
-# Load all data at startup (assume load_all_data returns a dict mapping year -> GeoDataFrame)
-data_by_year = load_all_data(DATA_BASE_DIR)
 
 app = FastAPI(
     title="Spatial Data API",
@@ -19,42 +15,17 @@ app = FastAPI(
 def root():
     return {"message": "Spatial Data API is running"}
 
+@app.get("/cutout", response_class=Response)
+def get_cutout(lon1: float, lat1: float, lon2: float, lat2: float):
+    """
+    Example endpoint:
+    GET /cutout?lon1=-11.2843&lat1=16.9779&lon2=-12.3143&lat2=16.4229
+    """
+    # Call your function that returns the PNG in-memory as bytes
+    png_bytes = visualize_land_cutout(lon1, lat1, lon2, lat2)
 
-@app.post("/get_data", response_model=DataResponse, tags=["Data Query"])
-def get_data(query: AreaQuery):
-    year = query.year
-    if year not in data_by_year:
-        raise HTTPException(status_code=404, detail=f"No data found for year {year}")
+    # Return the image bytes as an HTTP response with the correct media type
+    return Response(content=png_bytes, media_type="image/png")
 
-    # Create bounding box from query
-    bbox = box(query.min_lon, query.min_lat, query.max_lon, query.max_lat)
-
-    # Retrieve the relevant GeoDataFrame for the specified year
-    gdf = data_by_year[year]
-
-    # Filter GeoDataFrame to those geometries intersecting the bounding box
-    matching = gdf[gdf.intersects(bbox)]
-    if matching.empty:
-        raise HTTPException(status_code=404, detail="No data found for the specified bounding box")
-
-    results = []
-
-    # Decide on the return type based on the layer name.
-    # For example, layers starting with "Layer" return pixel data,
-    # and layers starting with "Analytics" return vector data.
-    for layer in query.layers:
-        if layer.startswith("Layer"):
-            # Replace with actual logic to extract a 100x100 pixel grid from the raster
-            dummy_grid = [[0.0 for _ in range(100)] for _ in range(100)]
-            results.append(PixelData(layer=layer, data=dummy_grid))
-        elif layer.startswith("Analytics"):
-            # Replace with actual logic to extract vector data (e.g., clip geometries to bbox)
-            dummy_geojson = {
-                "type": "FeatureCollection",
-                "features": []  # Populate with actual features clipped to the bounding box
-            }
-            results.append(VectorData(layer=layer, geometry=dummy_geojson))
-        else:
-            raise HTTPException(status_code=400, detail=f"Invalid layer type: {layer}")
-
-    return DataResponse(result=results)
+if __name__ == "__main__":
+    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)

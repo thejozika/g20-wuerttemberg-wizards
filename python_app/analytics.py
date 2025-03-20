@@ -1,75 +1,38 @@
-import os
-import matplotlib
-matplotlib.use("TkAgg")
+import numpy as np
+from pyproj import Transformer
+from rasterio.transform import from_bounds
+from rasterio.warp import reproject, Resampling
 
-import matplotlib.pyplot as plt
-from data_loader import load_all_datasets  # adjust the import as needed
-
-
-def dataset_summary(datasets: dict) -> dict:
-    """
-    Create a summary dictionary for each dataset.
-    For each layer, store the number of features and, if available,
-    basic stats (min, max, mean) on the 'value' attribute.
-    """
-    summary = {}
-    for dataset_name, layers in datasets.items():
-        summary[dataset_name] = {}
-        for layer_name, gdf in layers.items():
-            num_features = len(gdf)
-            stats = {}
-            if "value" in gdf.columns and not gdf["value"].empty:
-                stats = {
-                    "min": gdf["value"].min(),
-                    "max": gdf["value"].max(),
-                    "mean": gdf["value"].mean()
-                }
-            summary[dataset_name][layer_name] = {
-                "features": num_features,
-                "value_stats": stats
-            }
-    return summary
+from python_app.data_loader import common_grid
 
 
-def print_summary(summary: dict):
-    """
-    Print a neat summary of each dataset and its layers.
-    """
-    for dataset, layers in summary.items():
-        print("=" * 50)
-        print(f"Dataset: {dataset}")
-        for layer, stats in layers.items():
-            print(f"  Layer: {layer} - {stats['features']} features")
-            if stats["value_stats"]:
-                print(f"    Value stats: {stats['value_stats']}")
-        print("\n")
+def reproject_overlay(src_array,lon_1,lat_1,lon_2,lat_2, dst_width=854, dst_height=480):
+    src_crs = common_grid["crs"]
+    src_transform = common_grid["transform"]
+    transformer = Transformer.from_crs("EPSG:4326", src_crs, always_xy=True)
 
 
-def plot_feature_counts(summary: dict):
-    """
-    Plot bar charts for each dataset showing feature counts per layer.
-    """
-    for dataset, layers in summary.items():
-        layer_names = list(layers.keys())
-        feature_counts = [layers[layer]["features"] for layer in layer_names]
+    # Transform to sinusoidal:
+    x1, y1 = transformer.transform(lon_1, lat_1)
+    x2, y2 = transformer.transform(lon_2, lat_2)
 
-        plt.figure()
-        plt.bar(layer_names, feature_counts)
-        plt.title(f"Feature Counts for {dataset}")
-        plt.xlabel("Layer")
-        plt.ylabel("Number of Features")
-        plt.xticks(rotation=45)
-        plt.tight_layout()
-        plt.show()
+    min_x = min(x1, x2)
+    max_x = max(x1, x2)
+    min_y = min(y1, y2)
+    max_y = max(y1, y2)
+    # Initialize an array for the destination raster
+    subset_transform = from_bounds(min_x, min_y, max_x, max_y, dst_width, dst_height)
+    dst_array = np.empty((dst_height, dst_width), dtype=src_array.dtype)
 
+    # Reproject the source array into the destination array.
+    reproject(
+        source=src_array,
+        destination=dst_array,
+        src_transform=src_transform,
+        src_crs=src_crs,
+        dst_transform=subset_transform,
+        dst_crs=src_crs,  # Change this if your destination CRS is different.
+        resampling=Resampling.nearest  # Choose an appropriate resampling method.
+    )
 
-if __name__ == "__main__":
-    # Adjust the base_dir path as needed.
-    base_dir = "../datasets"
-    if os.path.exists(base_dir):
-        datasets = load_all_datasets(base_dir)
-        summary = dataset_summary(datasets)
-        print_summary(summary)
-        plot_feature_counts(summary)
-    else:
-        print(f"Dataset directory {base_dir} does not exist.")
+    return dst_array, subset_transform

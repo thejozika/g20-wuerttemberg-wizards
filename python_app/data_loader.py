@@ -368,6 +368,7 @@ modis_land_raster_datastruct = convert_modis_land_cover(modis_land_raster_layers
 
 modis_mask = (modis_land_raster_datastruct.array == 255)
 
+
 modis_gpp_dataset_path = "./python_app/datasets/MODIS_Gross_Primary_Production_GPP"
 modis_gpp_raster_layers = load_and_convert_raster_dataset_as_f32(modis_gpp_dataset_path)
 check_important_meta_consistency(modis_gpp_raster_layers)

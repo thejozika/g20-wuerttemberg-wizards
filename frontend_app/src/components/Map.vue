@@ -250,44 +250,65 @@ const years = [2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020,
 </script>
 
 <template>
-  <div>
-    <div class="relative">
-      <div class="absolute top-[50%] left-[50%] z-[1000] opacity-25">
-        <div class="h-[20px] w-[2px] bg-black absolute top-[-10px] left-[-1px]" />
-        <div class="h-[2px] w-[20px] bg-black absolute top-[-1px] left-[-10px]" />
+  <div class="bg-black">
+    <div>
+      <div class="relative">
+        <div class="absolute top-[50%] left-[50%] z-[1000] opacity-25">
+          <div class="h-[20px] w-[2px] bg-black absolute top-[-10px] left-[-1px]" />
+          <div class="h-[2px] w-[20px] bg-black absolute top-[-1px] left-[-10px]" />
+        </div>
+
+        <div id="map" class="aspect-video rounded-t" />
+      </div>
+    </div>
+
+    <div class="p-5">
+      <div class="flex flex-row justify-between gap-4 vertical-mid">
+        <span class="py-3 text-white/80">View changes over time:</span>
+        <button
+          class="hover:bg-black border-black hover:border-gold-dark hover:text-gold-dark border"
+          @click="play()"
+        >
+          Play
+        </button>
+        <div class="grow" />
+        <span class="py-3 text-white/80">Explore the Story: </span>
+        <button
+          class="hover:bg-black border-black hover:border-gold-dark hover:text-gold-dark border"
+          @click="nextPosition('previous')"
+        >
+          Previous
+        </button>
+
+        <button
+          class="hover:bg-black border-black hover:border-gold-dark hover:text-gold-dark border"
+          @click="nextPosition('next')"
+        >
+          Next
+        </button>
       </div>
 
-      <div id="map" class="aspect-video rounded-t" />
-    </div>
-  </div>
+      <div>
+        <div class="relative mb-6">
+          <label for="labels-range-input" class="sr-only">Labels range</label>
+          <input
+            id="labels-range-input"
+            v-model="year"
+            type="range"
+            value="2023"
+            min="2010"
+            max="2023"
+            class="w-full h-2 bg-gold-dark/25 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:bg-gold-shiny [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:cursor-pointer"
+          />
 
-  <div class="p-5">
-    <div class="flex flex-row justify-between">
-      <button @click="nextPosition('previous')">Previous</button>
-      <button @click="play()">Play</button>
-      <button @click="nextPosition('next')">Next</button>
-    </div>
-
-    <div>
-      <div class="relative mb-6">
-        <label for="labels-range-input" class="sr-only">Labels range</label>
-        <input
-          id="labels-range-input"
-          v-model="year"
-          type="range"
-          value="2023"
-          min="2010"
-          max="2023"
-          class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700"
-        />
-
-        <div class="flex flex-row justify-between">
-          <span
-            class="text-sm text-gray-500 dark:text-gray-400"
-            v-for="year in years"
-            :key="year"
-            >{{ year }}</span
-          >
+          <div class="flex flex-row justify-between">
+            <span
+              class="text-sm text-gray-500 dark:text-gray-400"
+              v-for="year in years"
+              :key="year"
+              >{{ year }}</span
+            >
+          </div>
         </div>
       </div>
     </div>

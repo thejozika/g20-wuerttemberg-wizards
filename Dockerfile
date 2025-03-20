@@ -1,22 +1,31 @@
-# Use a base Python image
-FROM python:3.10-slim
+FROM python:3.10
 
-# Create a directory inside the container; we'll call it /app
+# Set a working directory
 WORKDIR /app
 
-# Copy requirements first and install (to leverage build cache)
+# Install any system dependencies your geospatial libraries need
+# (Even in a bigger image, you usually still need GDAL, PROJ, build tools, etc.)
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    gdal-bin \
+    libgdal-dev \
+    libproj-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+# Environment variables for Rasterio/pyproj to locate GDAL headers
+ENV CPLUS_INCLUDE_PATH=/usr/include/gdal
+ENV C_INCLUDE_PATH=/usr/include/gdal
+
+# Copy your requirements file and install Python dependencies
 COPY python_app/requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Now copy both folders into /app
-COPY python_app/ python_app/
-COPY datasets/ datasets/
+# Now copy in your actual application code
+COPY python_app/. ./python_app/
+COPY datasets/. ./datasets/
 
-# We will run the application from within python_app
-WORKDIR /app/python_app
-
-# Expose the port (if you're running a web server inside, e.g. FastAPI)
+# Expose a port if you are running a server (FastAPI, etc.)
 EXPOSE 8000
 
-# Example: run FastAPI with Uvicorn
-CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8000"]
+# Example: run a FastAPI app with Uvicorn
+CMD ["uvicorn", "python_app.main:app", "--host", "0.0.0.0", "--port", "8000"]

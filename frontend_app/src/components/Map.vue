@@ -59,8 +59,27 @@ const getCutoutUrl = (map, type) => {
 let zoom = null
 
 onMounted(() => {
+  const baseMaps = {
+    OpenStreetMap: L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 19,
+      attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+    }),
+    Satellite: L.tileLayer(
+      'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+      {
+        maxZoom: 19,
+        attribution: '&copy; <a href="https://www.esri.com/">Esri</a> contributors',
+      },
+    ),
+    OpenTopoMap: L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+      maxZoom: 19,
+      attribution: '&copy; OpenTopoMap & OpenStreetMap contributors',
+    }),
+  }
+
   map = L.map('map', {
     //dragging: false,
+    layers: [baseMaps.Satellite],
   }).setView(
     {
       lat: position.value.lat,
@@ -70,15 +89,12 @@ onMounted(() => {
   )
 
   map.setMaxBounds(L.latLngBounds(L.latLng(14, -15), L.latLng(19, -9)))
-  map.setMaxZoom(13)
-  map.setMinZoom(7)
+  map.setMaxZoom(15)
+  map.setMinZoom(8)
 
   nextPosition('n', 0)
 
-  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    maxZoom: 19,
-    attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-  }).addTo(map)
+  L.control.layers(baseMaps).addTo(map)
 
   cutout.Assaba_Districts_layer = L.geoJson(null, {
     style: { color: 'gray', weight: 2 },

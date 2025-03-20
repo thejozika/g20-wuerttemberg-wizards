@@ -1,5 +1,5 @@
 import uvicorn
-from fastapi.openapi.models import Response
+from fastapi.responses import Response
 from fastapi import FastAPI
 
 from python_app.visualizer import visualize_land_cutout
@@ -22,8 +22,8 @@ def get_cutout(lon1: float, lat1: float, lon2: float, lat2: float):
     GET /cutout?lon1=-11.2843&lat1=16.9779&lon2=-12.3143&lat2=16.4229
     """
     # Call your function that returns the PNG in-memory as bytes
-    png_bytes = visualize_land_cutout(lon1, lat1, lon2, lat2)
-
+    png_bytes_io = visualize_land_cutout(lon1, lat1, lon2, lat2)  # returns BytesIO
+    png_bytes = png_bytes_io.getvalue()
     # Return the image bytes as an HTTP response with the correct media type
     return Response(content=png_bytes, media_type="image/png")
 

@@ -338,7 +338,7 @@ def convert_standard_set_with_interpolation(
             y1, y2 = sorted_years[-2], sorted_years[-1]
             arr1, arr2 = year_dict[y1]['array'], year_dict[y2]['array']
             ratio = (y - y1) / (y2 - y1)
-            return arr1 + ratio * (arr2 - arr1)
+            return arr2 + ratio * (arr2 - arr1)
 
         for i in range(1, len(sorted_years)):
             if sorted_years[i] > y:

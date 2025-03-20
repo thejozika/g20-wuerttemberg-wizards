@@ -17,12 +17,11 @@ ENV CPLUS_INCLUDE_PATH=/usr/include/gdal
 ENV C_INCLUDE_PATH=/usr/include/gdal
 
 # Copy your requirements file and install Python dependencies
-COPY python_app/requirements.txt ./
+COPY ./requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Now copy in your actual application code
-COPY python_app/. ./python_app/
-COPY datasets/. ./datasets/
+COPY ./. ./python_app/
 
 # Expose a port if you are running a server (FastAPI, etc.)
 EXPOSE 8000

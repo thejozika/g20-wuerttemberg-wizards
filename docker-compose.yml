@@ -3,7 +3,11 @@ version: '3.8'
 services:
   frontend:
     build:
-      context: ./frontend-app
+      context: frontend_app
       dockerfile: Dockerfile
     ports:
       - "8080:80"
+  backend:
+    build:
+      context: python_app
+      dockerfile: Dockerfile

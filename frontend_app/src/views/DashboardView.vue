@@ -1,5 +1,8 @@
 <script setup>
 import Map from '@/components/Map.vue'
+import { ref } from 'vue'
+
+const pos = ref(null)
 </script>
 
 <template>
@@ -35,14 +38,31 @@ import Map from '@/components/Map.vue'
     </div>
 
     <div class="grid grid-cols-5 gap-10">
-      <div class="border rounded col-span-3">
-        <Map />
+      <div class="col-span-3">
+        <div class="border rounded">
+          <Map @pos="(c) => (pos = c)" />
+        </div>
       </div>
 
       <div class="col-span-2 flex flex-col gap-5">
-        <div class="border rounded p-5">Infos</div>
+        <div class="border rounded p-5">
+          <h3 class="text-2xl mb-3">{{ pos?.title }}</h3>
 
-        <div class="border rounded p-5">Infos</div>
+          <p>
+            {{ pos?.content }}
+          </p>
+        </div>
+
+        <div class="border rounded p-5">
+          <h3 class="text-2xl mb-3">Policies for {{ pos?.title }}</h3>
+
+          <ul class="flex flex-col gap-2">
+            <li v-for="p in pos?.policies" :key="p.title">
+              <strong>{{ p.title }}</strong
+              >: {{ p.content }}
+            </li>
+          </ul>
+        </div>
       </div>
     </div>
   </div>

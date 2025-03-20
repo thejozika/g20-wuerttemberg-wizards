@@ -1,7 +1,14 @@
 <script setup>
 import 'leaflet'
 import 'leaflet/dist/leaflet.css'
-import { onMounted, ref, watch } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
+
+const emit = defineEmits(['pos'])
+
+import pos from '../assets/content_texts.json'
+import { setPosition } from 'leaflet/src/dom/DomUtil.js'
+
+let overlayMaps = {}
 
 let map = null
 
@@ -13,26 +20,22 @@ let cutout = {
   goat: null,
   cattle: null,
   sheep: null,
+
+  Assaba_Districts_layer: null,
+  Assaba_Region_layer: null,
+  Main_Road: null,
+  Streamwater: null,
 }
 
-let currentPosition = 0
+const currentPosition = ref(0)
 
-const positions = [
-  {
-    latLng: {
-      lat: 16.619579678236377,
-      lng: -11.406211853027344,
-    },
-    zoom: 13,
-  },
-  {
-    latLng: {
-      lat: 48,
-      lng: 9,
-    },
-    zoom: 10,
-  },
-]
+const positionCount = computed(() => {
+  return pos.length
+})
+
+const position = computed(() => {
+  return pos[currentPosition.value]
+})
 
 const year = ref(2023)
 
@@ -56,26 +59,34 @@ let zoom = null
 onMounted(() => {
   map = L.map('map', {
     //dragging: false,
-  }).setView(positions[0].latLng, positions[0].zoom)
+  }).setView(
+    {
+      lat: position.value.lat,
+      lng: position.value.lng,
+    },
+    position.value.zoom,
+  )
+
+  nextPosition('n', 0)
 
   L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
     maxZoom: 19,
     attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
   }).addTo(map)
 
-  const Assaba_Districts_layer = L.geoJson(null, {
+  cutout.Assaba_Districts_layer = L.geoJson(null, {
     style: { color: 'gray', weight: 2 },
   })
 
-  const Assaba_Region_layer = L.geoJson(null, {
+  cutout.Assaba_Region_layer = L.geoJson(null, {
     style: { color: 'darkgray', weight: 2 },
   })
 
-  const Main_Road = L.geoJson(null, {
+  cutout.Main_Road = L.geoJson(null, {
     style: { color: 'black', weight: 2 },
   })
 
-  const Streamwater = L.geoJson(null, {
+  cutout.Streamwater = L.geoJson(null, {
     style: { color: 'blue', weight: 1 },
   })
 
@@ -88,28 +99,28 @@ onMounted(() => {
   fetch('/Assaba_Districts_layer.geojson')
     .then((response) => response.json())
     .then((data) => {
-      Assaba_Districts_layer.addData(data)
+      cutout.Assaba_Districts_layer.addData(data)
     })
 
   fetch('/Assaba_Region_layer.geojson')
     .then((response) => response.json())
     .then((data) => {
-      Assaba_Region_layer.addData(data)
+      cutout.Assaba_Region_layer.addData(data)
     })
 
   fetch('/Main_Road.geojson')
     .then((response) => response.json())
     .then((data) => {
-      Main_Road.addData(data)
+      cutout.Main_Road.addData(data)
     })
 
   fetch('/Streamwater.geojson')
     .then((response) => response.json())
     .then((data) => {
-      Streamwater.addData(data)
+      cutout.Streamwater.addData(data)
     })
 
-  const overlayMaps = {
+  overlayMaps = {
     'Land Type': cutout.land,
     Biomass: cutout.gpp,
     Goat: cutout.goat,
@@ -117,10 +128,10 @@ onMounted(() => {
     Sheep: cutout.sheep,
     Population: cutout.population,
     Precipitation: cutout.precipitation,
-    'Assaba Districts': Assaba_Districts_layer,
-    'Assaba Region': Assaba_Region_layer,
-    'Main Road': Main_Road,
-    Streamwater: Streamwater,
+    'Assaba Districts': cutout.Assaba_Districts_layer,
+    'Assaba Region': cutout.Assaba_Region_layer,
+    'Main Road': cutout.Main_Road,
+    Streamwater: cutout.Streamwater,
   }
 
   L.control.layers(null, overlayMaps, { collapsed: false }).addTo(map)
@@ -142,24 +153,51 @@ watch(year, () => {
   })
 })
 
-const nextPosition = (direction = 'next') => {
-  if (direction === 'next') {
-    if (currentPosition < positions.length - 1) {
-      currentPosition++
-    } else {
-      currentPosition = 0
-    }
+const nextPosition = (direction = 'next', set) => {
+  if (set) {
+    currentPosition.value = set
   } else {
-    if (currentPosition > 0) {
-      currentPosition--
+    if (direction === 'next') {
+      if (currentPosition.value < positionCount.value - 1) {
+        currentPosition.value++
+      } else {
+        currentPosition.value = 0
+      }
     } else {
-      currentPosition = positions.length - 1
+      if (currentPosition.value > 0) {
+        currentPosition.value--
+      } else {
+        currentPosition.value = positionCount.value - 1
+      }
     }
   }
 
-  map.flyTo(positions[currentPosition].latLng, positions[currentPosition].zoom, {
-    duration: 0.75,
+  emit('pos', position.value)
+
+  Object.values(overlayMaps).forEach((layer) => {
+    if (map.hasLayer(layer)) {
+      map.removeLayer(layer)
+    }
   })
+
+  map.flyTo(
+    {
+      lat: position.value.lat,
+      lng: position.value.lng,
+    },
+    position.value.zoom,
+    {
+      duration: 0.75,
+    },
+  )
+
+  setTimeout(() => {
+    position.value.layers.forEach((l) => {
+      if (Object.keys(cutout).filter((e) => e === l).length === 1) {
+        map.addLayer(cutout[l])
+      }
+    })
+  }, 1000)
 }
 
 const play = async () => {
@@ -167,7 +205,7 @@ const play = async () => {
 
   for (let i = 0; i < years.length; i++) {
     year.value = years[i]
-    await new Promise((p) => setTimeout(p, 1000))
+    await new Promise((p) => setTimeout(p, 2000))
   }
 
   year.value = currentYear
@@ -179,9 +217,9 @@ const years = [2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020,
 <template>
   <div>
     <div class="relative">
-      <div class="absolute top-[50%] left-[50%] z-[1000]">
-        <div class="h-[40px] w-[2px] bg-black absolute top-[-20px] left-[-1px]" />
-        <div class="h-[2px] w-[40px] bg-black absolute top-[-1px] left-[-20px]" />
+      <div class="absolute top-[50%] left-[50%] z-[1000] opacity-25">
+        <div class="h-[20px] w-[2px] bg-black absolute top-[-10px] left-[-1px]" />
+        <div class="h-[2px] w-[20px] bg-black absolute top-[-1px] left-[-10px]" />
       </div>
 
       <div id="map" class="aspect-video rounded-t" />

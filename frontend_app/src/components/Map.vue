@@ -4,7 +4,16 @@ import 'leaflet/dist/leaflet.css'
 import { onMounted, ref, watch } from 'vue'
 
 let map = null
-let LandType = null
+
+let cutout = {
+  land: null,
+  gpp: null,
+  population: null,
+  precipitation: null,
+  goat: null,
+  cattle: null,
+  sheep: null,
+}
 
 let currentPosition = 0
 
@@ -27,7 +36,7 @@ const positions = [
 
 const year = ref(2023)
 
-const getCutoutUrl = (map) => {
+const getCutoutUrl = (map, type) => {
   let base = '/backend'
 
   if (import.meta.env.DEV) {
@@ -39,8 +48,10 @@ const getCutoutUrl = (map) => {
   const lon2 = map.getBounds().getSouthEast().lng
   const lat2 = map.getBounds().getSouthEast().lat
 
-  return `${base}/cutout/land?lon1=${lon1}&lat1=${lat1}&lon2=${lon2}&lat2=${lat2}&year=${year.value}`
+  return `${base}/cutout/${type}?lon1=${lon1}&lat1=${lat1}&lon2=${lon2}&lat2=${lat2}&year=${year.value}`
 }
+
+let zoom = null
 
 onMounted(() => {
   map = L.map('map', {
@@ -68,8 +79,10 @@ onMounted(() => {
     style: { color: 'blue', weight: 1 },
   })
 
-  LandType = L.imageOverlay(getCutoutUrl(map), map.getBounds(), {
-    opacity: 0.5,
+  Object.keys(cutout).forEach((t) => {
+    cutout[t] = L.imageOverlay(getCutoutUrl(map, t), map.getBounds(), {
+      opacity: 0.5,
+    })
   })
 
   fetch('/Assaba_Districts_layer.geojson')
@@ -97,7 +110,13 @@ onMounted(() => {
     })
 
   const overlayMaps = {
-    'Land Type': LandType,
+    'Land Type': cutout.land,
+    Biomass: cutout.gpp,
+    Goat: cutout.goat,
+    Cattle: cutout.cattle,
+    Sheep: cutout.sheep,
+    Population: cutout.population,
+    Precipitation: cutout.precipitation,
     'Assaba Districts': Assaba_Districts_layer,
     'Assaba Region': Assaba_Region_layer,
     'Main Road': Main_Road,
@@ -109,14 +128,18 @@ onMounted(() => {
   map.on('moveend', (e) => {
     console.log(map.getBounds(), map.getCenter(), map.getZoom())
 
-    LandType.setUrl(getCutoutUrl(map))
-    LandType.setBounds(map.getBounds())
+    Object.keys(cutout).forEach((t) => {
+      cutout[t].setUrl(getCutoutUrl(map, t))
+      cutout[t].setBounds(map.getBounds())
+    })
   })
 })
 
 watch(year, () => {
-  LandType.setUrl(getCutoutUrl(map))
-  LandType.setBounds(map.getBounds())
+  Object.keys(cutout).forEach((t) => {
+    cutout[t].setUrl(getCutoutUrl(map, t))
+    cutout[t].setBounds(map.getBounds())
+  })
 })
 
 const nextPosition = (direction = 'next') => {
@@ -139,6 +162,17 @@ const nextPosition = (direction = 'next') => {
   })
 }
 
+const play = async () => {
+  const currentYear = year.value
+
+  for (let i = 0; i < years.length; i++) {
+    year.value = years[i]
+    await new Promise((p) => setTimeout(p, 1000))
+  }
+
+  year.value = currentYear
+}
+
 const years = [2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023]
 </script>
 
@@ -157,6 +191,7 @@ const years = [2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020,
   <div class="p-5">
     <div class="flex flex-row justify-between">
       <button @click="nextPosition('previous')">Previous</button>
+      <button @click="play()">Play</button>
       <button @click="nextPosition('next')">Next</button>
     </div>
 

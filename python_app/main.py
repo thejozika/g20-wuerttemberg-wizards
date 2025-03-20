@@ -2,7 +2,7 @@ import uvicorn
 from fastapi.responses import Response
 from fastapi import FastAPI, Query, HTTPException
 
-from python_app.visualizer import visualize_land_cutout
+from python_app.visualizer import visualize_land_cutout, visualize_gpp_cutout
 
 app = FastAPI(
     title="Spatial Data API",
@@ -35,7 +35,7 @@ def get_cutout(lon1: float, lat1: float, lon2: float, lat2: float,year: int = Qu
     GET /cutout?lon1=-11.2843&lat1=16.9779&lon2=-12.3143&lat2=16.4229&year=2010
     """
     try:
-        png_bytes_io = visualize_land_cutout(lon1, lat1, lon2, lat2, year=year-2010)  # update your function to handle year
+        png_bytes_io = visualize_gpp_cutout(lon1, lat1, lon2, lat2, year=year-2010)  # update your function to handle year
         png_bytes = png_bytes_io.getvalue()
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))

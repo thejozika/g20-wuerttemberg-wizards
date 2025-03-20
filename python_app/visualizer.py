@@ -8,11 +8,11 @@ import matplotlib.colors as mcolors
 from python_app.data_loader import common_grid, modis_land_raster_datastruct, modis_gpp_datastruct, \
     climate_precipitation_datastruct, population_density_datastruct, glw_sheep_datastruct, glw_goat_datastruct, \
     glw_cattle_datastruct
-from analytics import reproject_overlay
+from python_app.analytics import reproject_overlay
 
 
 def replace_nodata_with_nan(array, nodata_val=65535.0):
-    #return np.where(array >= 6500, np.nan, array) for the fucking other modis set
+    #return  for the fucking other modis set
     return np.where(array == nodata_val, np.nan, array)
 
 
@@ -29,13 +29,30 @@ def visualize(data: np.array, meta: dict, year: int):
 
 
 def visualize_land_cutout(lon1, lat1, lon2, lat2):
+    data = modis_land_raster_datastruct.array
+    meta = common_grid.copy()
+    meta['dtype'] = modis_land_raster_datastruct.dtype
+    meta['nodata'] = modis_land_raster_datastruct.nodata
+    # Reproject overlay
+    dst_array, dst_transform = reproject_overlay(
+        data,
+        meta,
+        lon1, lat1, lon2, lat2,
+        dst_width=854,
+        dst_height=480
+    )
+    # Replace nodata
+    data_nan = np.where(data >= 6500, np.nan, data)
+
+def visualize_land_cutout(lon1, lat1, lon2, lat2):
     """
-    Perform the cutout and return a PNG bytes object.
+    Perform the cutout and return a PNG bytes object, with only the image shown.
     """
     data = modis_land_raster_datastruct.array
     meta = common_grid.copy()
     meta['dtype'] = modis_land_raster_datastruct.dtype
     meta['nodata'] = modis_land_raster_datastruct.nodata
+
     # Reproject overlay
     dst_array, dst_transform = reproject_overlay(
         data,
@@ -71,26 +88,19 @@ def visualize_land_cutout(lon1, lat1, lon2, lat2):
 
     sorted_keys = sorted(classes.keys())
     color_list = [classes[k][1] for k in sorted_keys]
-    label_list = [classes[k][0] for k in sorted_keys]
-
     cmap = mcolors.ListedColormap(color_list, name='LandCoverMap')
     boundaries = sorted_keys + [max(sorted_keys) + 1]
     norm = mcolors.BoundaryNorm(boundaries, cmap.N)
 
     # Create figure in memory
     fig, ax = plt.subplots(figsize=(8, 6))
-    img = ax.imshow(data_nan, cmap=cmap, norm=norm)
-    ax.set_title("Land Cover Cutout")
-    ax.set_xlabel("Columns")
-    ax.set_ylabel("Rows")
+    ax.imshow(data_nan, cmap=cmap, norm=norm)
+    ax.set_axis_off()  # Remove axes, ticks, labels
 
-    cbar = plt.colorbar(img, ax=ax, ticks=[k + 0.5 for k in sorted_keys])
-    cbar.ax.set_yticklabels(label_list)
-
-    # Save to in-memory buffer
+    # Save to in-memory buffer with no extra margins
     png_bytes = io.BytesIO()
-    fig.savefig(png_bytes, format='png', bbox_inches='tight')
-    plt.close(fig)  # Close the figure
+    fig.savefig(png_bytes, format='png', bbox_inches='tight', pad_inches=0)
+    plt.close(fig)
 
     # Rewind the BytesIO buffer
     png_bytes.seek(0)

@@ -1,38 +1,38 @@
-{
-    "kiffa": {
-        "title": "Kiffa",
-        "content": "Kiffa, the capital of Mauritania's Assaba region, is situated in the southern semi-arid zone, approximately 600 km from Nouakchott, enduring a hot, dry climate with temperatures reaching 45°C and minimal rainfall of 200-300 mm annually. Over the past two decades, its population has doubled, with 47% now under the age of 15, significantly straining scarce water resources and prompting agricultural expansion that depletes soil fertility and accelerates nutrient loss. This overexploitation exacerbates the region's susceptibility to desertification and climate change, compounding environmental pressures. These factors highlight the pressing need for sustainable strategies to mitigate water scarcity, land degradation, and the socio-economic burdens of a rapidly growing, youthful population.",
-        "policies": [
-            {
-                "title": "Combat water scarcity",
-                "content": "Introduce rainwater harvesting systems (e.g., Zai pits), as used successfully in Burkina Faso, to store rainfall efficiently and reduce reliance on overused groundwater."
-            },
-            {
-                "title": "Halt soil degradation and desertification",
-                "content": "Promote agroforestry with nitrogen-fixing trees like Faidherbia albida, inspired by Niger’s Farmer-Managed Natural Regeneration, to boost soil fertility and curb erosion."
-            },
-            {
-                "title": "Ease socio-economic strain from population growth",
-                "content": "Develop education and job programs for the youthful population similar to Senegal’s urban initiatives, to create opportunities and lessen resource pressure."
-            }
-        ]
-    },
-    "aftout": {
-        "title": "Aftout",
-        "content": "Aftout, a low-lying region in southern Mauritania, endures a semi-arid climate marked by extreme weather cycles, with flooding during the rainy season and severe droughts in the dry months, receiving erratic rainfall averaging 200-400 mm annually. Its economy relies on seasonal agriculture—cultivating crops like millet—and transhumance, the seasonal movement of livestock such as cattle and goats, both increasingly vulnerable to desertification and soil degradation that erode fertile land. Over the past two decades, these environmental pressures have intensified, accelerating water scarcity and reducing arable land, threatening traditional livelihoods. Culturally rooted in nomadic traditions, Aftout’s population maintains a mobile lifestyle despite limited access to education and healthcare. These conditions underscore the urgent need for sustainable solutions to combat droughts, restore degraded soils, and secure water resources for a resilient future.",
-        "policies": [
-            {
-                "title": "Mitigate extreme weather cycles and water scarcity",
-                "content": "Implement small-scale dams and water retention basins, as successfully used in Chad, to capture floodwater during the rainy season and store it for use during droughts."
-            },
-            {
-                "title": "Counter desertification and soil degradation",
-                "content": "Promote reforestation with drought-resistant species like Acacia, inspired by the Great Green Wall in the Sahel, to stabilize soils and restore degraded land."
-            },
-            {
-                "title": "Support threatened livelihoods",
-                "content": "Introduce mobile water tanks for transhumant herders, similar to solutions in Niger, to ensure livestock access to water and sustain traditional nomadic practices."
-            }
-        ]
-    }
-}
+[
+  {
+    "title": "Kiffa",
+    "content": "Kiffa, the capital of Mauritania's Assaba region, is situated in the southern semi-arid zone, approximately 600 km from Nouakchott, enduring a hot, dry climate with temperatures reaching 45°C and minimal rainfall of 200-300 mm annually. Over the past two decades, its population has doubled, with 47% now under the age of 15, significantly straining scarce water resources and prompting agricultural expansion that depletes soil fertility and accelerates nutrient loss. This overexploitation exacerbates the region's susceptibility to desertification and climate change, compounding environmental pressures. These factors highlight the pressing need for sustainable strategies to mitigate water scarcity, land degradation, and the socio-economic burdens of a rapidly growing, youthful population.",
+    "policies": [
+      {
+        "title": "Combat water scarcity",
+        "content": "Introduce rainwater harvesting systems (e.g., Zai pits), as used successfully in Burkina Faso, to store rainfall efficiently and reduce reliance on overused groundwater."
+      },
+      {
+        "title": "Halt soil degradation and desertification",
+        "content": "Promote agroforestry with nitrogen-fixing trees like Faidherbia albida, inspired by Niger’s Farmer-Managed Natural Regeneration, to boost soil fertility and curb erosion."
+      },
+      {
+        "title": "Ease socio-economic strain from population growth",
+        "content": "Develop education and job programs for the youthful population similar to Senegal’s urban initiatives, to create opportunities and lessen resource pressure."
+      }
+    ]
+  },
+  {
+    "title": "Aftout",
+    "content": "Aftout, a low-lying region in southern Mauritania, endures a semi-arid climate marked by extreme weather cycles, with flooding during the rainy season and severe droughts in the dry months, receiving erratic rainfall averaging 200-400 mm annually. Its economy relies on seasonal agriculture—cultivating crops like millet—and transhumance, the seasonal movement of livestock such as cattle and goats, both increasingly vulnerable to desertification and soil degradation that erode fertile land. Over the past two decades, these environmental pressures have intensified, accelerating water scarcity and reducing arable land, threatening traditional livelihoods. Culturally rooted in nomadic traditions, Aftout’s population maintains a mobile lifestyle despite limited access to education and healthcare. These conditions underscore the urgent need for sustainable solutions to combat droughts, restore degraded soils, and secure water resources for a resilient future.",
+    "policies": [
+      {
+        "title": "Mitigate extreme weather cycles and water scarcity",
+        "content": "Implement small-scale dams and water retention basins, as successfully used in Chad, to capture floodwater during the rainy season and store it for use during droughts."
+      },
+      {
+        "title": "Counter desertification and soil degradation",
+        "content": "Promote reforestation with drought-resistant species like Acacia, inspired by the Great Green Wall in the Sahel, to stabilize soils and restore degraded land."
+      },
+      {
+        "title": "Support threatened livelihoods",
+        "content": "Introduce mobile water tanks for transhumant herders, similar to solutions in Niger, to ensure livestock access to water and sustain traditional nomadic practices."
+      }
+    ]
+  }
+]

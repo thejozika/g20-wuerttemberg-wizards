@@ -63,6 +63,12 @@ const pos = ref(null)
             </li>
           </ul>
         </div>
+
+        <div class="border rounded p-5">
+          <h3 class="text-2xl mb-3">Help {{ pos?.title }}</h3>
+
+          <p>Support helping organizations :-)</p>
+        </div>
       </div>
     </div>
   </div>

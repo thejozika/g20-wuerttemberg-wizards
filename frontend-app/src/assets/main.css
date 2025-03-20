@@ -1,5 +1,15 @@
 @import "tailwindcss";
 
-body {
-  @apply bg-gray-800 text-white;
+@layer base {
+  body {
+    @apply bg-white text-black text-lg;
+  }
+
+  button {
+   @apply bg-black text-white px-5 py-2 rounded cursor-pointer duration-300 hover:bg-gray-900;
+  }
+
+  a {
+    @apply underline underline-offset-4 duration-150 hover:underline-offset-2;
+  }
 }

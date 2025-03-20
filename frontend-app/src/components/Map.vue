@@ -10,10 +10,10 @@ let currentPosition = 0
 const positions = [
   {
     latLng: {
-      lat: 16.7,
-      lng: -11.8,
+      lat: 16.619579678236377,
+      lng: -11.406211853027344,
     },
-    zoom: 8,
+    zoom: 13,
   },
   {
     latLng: {
@@ -35,11 +35,11 @@ onMounted(() => {
   }).addTo(map)
 
   const Assaba_Districts_layer = L.geoJson(null, {
-    style: { color: 'red', weight: 2 },
+    style: { color: 'gray', weight: 2 },
   })
 
   const Assaba_Region_layer = L.geoJson(null, {
-    style: { color: 'blue', weight: 2 },
+    style: { color: 'darkgray', weight: 2 },
   })
 
   const Main_Road = L.geoJson(null, {
@@ -84,7 +84,7 @@ onMounted(() => {
   L.control.layers(null, overlayMaps, { collapsed: false }).addTo(map)
 
   map.on('moveend', (e) => {
-    console.log(map.getBounds())
+    console.log(map.getBounds(), map.getCenter(), map.getZoom())
   })
 })
 
@@ -119,24 +119,14 @@ const years = [2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020,
         <div class="h-[2px] w-[40px] bg-black absolute top-[-1px] left-[-20px]" />
       </div>
 
-      <div id="map" class="aspect-square rounded-t" />
+      <div id="map" class="aspect-video rounded-t" />
     </div>
   </div>
 
   <div class="p-5">
     <div class="flex flex-row justify-between">
-      <button
-        @click="nextPosition('previous')"
-        class="bg-white text-black px-5 py-2 rounded cursor-pointer"
-      >
-        Previous
-      </button>
-      <button
-        @click="nextPosition('next')"
-        class="bg-white text-black px-5 py-2 rounded cursor-pointer"
-      >
-        Next
-      </button>
+      <button @click="nextPosition('previous')">Previous</button>
+      <button @click="nextPosition('next')">Next</button>
     </div>
 
     <div>

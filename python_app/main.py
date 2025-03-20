@@ -4,7 +4,6 @@ from fastapi import FastAPI
 
 from python_app.visualizer import visualize_land_cutout
 
-
 app = FastAPI(
     title="Spatial Data API",
     description="API to query spatial data by bounding box, year, and layer(s)"
@@ -14,6 +13,7 @@ app = FastAPI(
 @app.get("/", tags=["Root"])
 def root():
     return {"message": "Spatial Data API is running"}
+
 
 @app.get("/cutout", response_class=Response)
 def get_cutout(lon1: float, lat1: float, lon2: float, lat2: float):
@@ -26,6 +26,7 @@ def get_cutout(lon1: float, lat1: float, lon2: float, lat2: float):
 
     # Return the image bytes as an HTTP response with the correct media type
     return Response(content=png_bytes, media_type="image/png")
+
 
 if __name__ == "__main__":
     uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)

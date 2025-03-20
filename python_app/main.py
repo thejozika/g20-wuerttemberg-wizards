@@ -1,0 +1,32 @@
+import uvicorn
+from fastapi.openapi.models import Response
+from fastapi import FastAPI
+
+from python_app.visualizer import visualize_land_cutout
+
+app = FastAPI(
+    title="Spatial Data API",
+    description="API to query spatial data by bounding box, year, and layer(s)"
+)
+
+
+@app.get("/", tags=["Root"])
+def root():
+    return {"message": "Spatial Data API is running"}
+
+
+@app.get("/cutout", response_class=Response)
+def get_cutout(lon1: float, lat1: float, lon2: float, lat2: float):
+    """
+    Example endpoint:
+    GET /cutout?lon1=-11.2843&lat1=16.9779&lon2=-12.3143&lat2=16.4229
+    """
+    # Call your function that returns the PNG in-memory as bytes
+    png_bytes = visualize_land_cutout(lon1, lat1, lon2, lat2)
+
+    # Return the image bytes as an HTTP response with the correct media type
+    return Response(content=png_bytes, media_type="image/png")
+
+
+if __name__ == "__main__":
+    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)

@@ -1,6 +1,7 @@
 import io
 import numpy as np
 import matplotlib
+
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import matplotlib.colors as mcolors
@@ -14,6 +15,7 @@ def replace_nodata_with_nan(array, nodata_val=65535.0):
     #return  for the fucking other modis set
     return np.where(array == nodata_val, np.nan, array)
 
+
 def visualize(data):
     plt.figure(figsize=(10, 8))
     img = plt.imshow(data, cmap='viridis')
@@ -22,6 +24,7 @@ def visualize(data):
     plt.ylabel('Rows')
     plt.colorbar(img, label='Pixel Values')
     plt.show()
+
 
 def visualize_animal_desertifation_cutout(lon1, lat1, lon2, lat2, year=0):
     data = animals_desertification
@@ -35,12 +38,14 @@ def visualize_animal_desertifation_cutout(lon1, lat1, lon2, lat2, year=0):
 
     # Save to in-memory buffer with no extra margins
     png_bytes = io.BytesIO()
-    fig.savefig(png_bytes, format='png', bbox_inches='tight', pad_inches=0)
+    fig.patch.set_alpha(0)
+    fig.savefig(png_bytes, format='png', bbox_inches='tight', pad_inches=0, transparent=True)
     plt.close(fig)
 
     # Rewind the BytesIO buffer
     png_bytes.seek(0)
     return png_bytes
+
 
 def visualize_animal_gpp_change_cutout(lon1, lat1, lon2, lat2, year=0):
     data = animal_gpp
@@ -54,12 +59,14 @@ def visualize_animal_gpp_change_cutout(lon1, lat1, lon2, lat2, year=0):
 
     # Save to in-memory buffer with no extra margins
     png_bytes = io.BytesIO()
-    fig.savefig(png_bytes, format='png', bbox_inches='tight', pad_inches=0)
+    fig.patch.set_alpha(0)
+    fig.savefig(png_bytes, format='png', bbox_inches='tight', pad_inches=0, transparent=True)
     plt.close(fig)
 
     # Rewind the BytesIO buffer
     png_bytes.seek(0)
     return png_bytes
+
 
 def visualize_vegetation_change_cutout(lon1, lat1, lon2, lat2, year=0):
     data = change_vegetation
@@ -73,7 +80,8 @@ def visualize_vegetation_change_cutout(lon1, lat1, lon2, lat2, year=0):
 
     # Save to in-memory buffer with no extra margins
     png_bytes = io.BytesIO()
-    fig.savefig(png_bytes, format='png', bbox_inches='tight', pad_inches=0)
+    fig.patch.set_alpha(0)
+    fig.savefig(png_bytes, format='png', bbox_inches='tight', pad_inches=0, transparent=True)
     plt.close(fig)
 
     # Rewind the BytesIO buffer
@@ -101,7 +109,8 @@ def visualize_gpp_cutout(lon1, lat1, lon2, lat2, year=0):
 
     # Save to in-memory buffer with no extra margins
     png_bytes = io.BytesIO()
-    fig.savefig(png_bytes, format='png', bbox_inches='tight', pad_inches=0)
+    fig.patch.set_alpha(0)
+    fig.savefig(png_bytes, format='png', bbox_inches='tight', pad_inches=0, transparent=True)
     plt.close(fig)
 
     # Rewind the BytesIO buffer
@@ -162,7 +171,8 @@ def visualize_land_cutout(lon1, lat1, lon2, lat2, year=0):
 
     # Save to in-memory buffer with no extra margins
     png_bytes = io.BytesIO()
-    fig.savefig(png_bytes, format='png', bbox_inches='tight', pad_inches=0)
+    fig.patch.set_alpha(0)
+    fig.savefig(png_bytes, format='png', bbox_inches='tight', pad_inches=0, transparent=True)
     plt.close(fig)
 
     # Rewind the BytesIO buffer
@@ -188,11 +198,13 @@ def visualize_precipitation_cutout(lon1, lat1, lon2, lat2, year=0):
     ax.set_axis_off()
 
     png_bytes = io.BytesIO()
-    fig.savefig(png_bytes, format='png', bbox_inches='tight', pad_inches=0)
+    fig.patch.set_alpha(0)
+    fig.savefig(png_bytes, format='png', bbox_inches='tight', pad_inches=0, transparent=True)
     plt.close(fig)
 
     png_bytes.seek(0)
     return png_bytes
+
 
 # Population Density
 def visualize_population_density_cutout(lon1, lat1, lon2, lat2, year=0):
@@ -212,11 +224,13 @@ def visualize_population_density_cutout(lon1, lat1, lon2, lat2, year=0):
     ax.set_axis_off()
 
     png_bytes = io.BytesIO()
-    fig.savefig(png_bytes, format='png', bbox_inches='tight', pad_inches=0)
+    fig.patch.set_alpha(0)
+    fig.savefig(png_bytes, format='png', bbox_inches='tight', pad_inches=0, transparent=True)
     plt.close(fig)
 
     png_bytes.seek(0)
     return png_bytes
+
 
 # GLW Sheep
 def visualize_glw_sheep_cutout(lon1, lat1, lon2, lat2, year=0):
@@ -236,11 +250,13 @@ def visualize_glw_sheep_cutout(lon1, lat1, lon2, lat2, year=0):
     ax.set_axis_off()
 
     png_bytes = io.BytesIO()
-    fig.savefig(png_bytes, format='png', bbox_inches='tight', pad_inches=0)
+    fig.patch.set_alpha(0)
+    fig.savefig(png_bytes, format='png', bbox_inches='tight', pad_inches=0, transparent=True)
     plt.close(fig)
 
     png_bytes.seek(0)
     return png_bytes
+
 
 # GLW Goat
 def visualize_glw_goat_cutout(lon1, lat1, lon2, lat2, year=0):
@@ -260,11 +276,13 @@ def visualize_glw_goat_cutout(lon1, lat1, lon2, lat2, year=0):
     ax.set_axis_off()
 
     png_bytes = io.BytesIO()
-    fig.savefig(png_bytes, format='png', bbox_inches='tight', pad_inches=0)
+    fig.patch.set_alpha(0)
+    fig.savefig(png_bytes, format='png', bbox_inches='tight', pad_inches=0, transparent=True)
     plt.close(fig)
 
     png_bytes.seek(0)
     return png_bytes
+
 
 # GLW Cattle
 def visualize_glw_cattle_cutout(lon1, lat1, lon2, lat2, year=0):
@@ -284,7 +302,8 @@ def visualize_glw_cattle_cutout(lon1, lat1, lon2, lat2, year=0):
     ax.set_axis_off()
 
     png_bytes = io.BytesIO()
-    fig.savefig(png_bytes, format='png', bbox_inches='tight', pad_inches=0)
+    fig.patch.set_alpha(0)
+    fig.savefig(png_bytes, format='png', bbox_inches='tight', pad_inches=0, transparent=True)
     plt.close(fig)
 
     png_bytes.seek(0)

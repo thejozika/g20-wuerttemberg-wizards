@@ -40,7 +40,7 @@ function afterLeave(el) {
   el.style.height = '0'
 }
 </script>
-
+-
 <template>
   <div
     class="bg-cover bg-bottom min-h-screen"
@@ -83,7 +83,7 @@ function afterLeave(el) {
             </div>
           </div>
 
-          <div class="col-span-2 flex flex-col gap-5">
+          <div class="col-span-2 flex flex-col gap-5 row-span-2">
             <!-- Accordion Box 1 -->
             <div
               id="box_1"
@@ -151,6 +151,56 @@ function afterLeave(el) {
                   Donate
                 </button>
               </div>
+            </div>
+          </div>
+          <div
+            class="col-span-3 flex flex-col gap-2 transition-all duration-300 bg-black border border-gold-dark rounded-lg p-5 hover:shadow-[inset_0px_0px_80px_-20px_rgba(255,209,0,0.5)]"
+          >
+            <div class="flex flex-row justify-between">
+              <span>Biomass</span><span class="text-white/70">kg_C/m^2/year</span>
+            </div>
+            <div class="bg-white h-[1px] w-full" />
+            <div class="flex flex-row justify-between">
+              <span>Goat</span><span class="text-white/70">count/km^2</span>
+            </div>
+            <div class="bg-white h-[1px] w-full" />
+            <div class="flex flex-row justify-between">
+              <span>Cattle</span><span class="text-white/70">count/km^2</span>
+            </div>
+            <div class="bg-white h-[1px] w-full" />
+            <div class="flex flex-row justify-between">
+              <span>Sheeps</span><span class="text-white/70">count/km^2</span>
+            </div>
+            <div class="bg-white h-[1px] w-full" />
+            <div class="flex flex-row justify-between">
+              <span>Population</span><span class="text-white/70">count/km^2</span>
+            </div>
+            <div class="bg-white h-[1px] w-full" />
+            <div class="flex flex-row justify-between">
+              <span>Precipitation</span><span class="text-white/70">mm/year</span>
+            </div>
+            <div class="bg-white h-[1px] w-full" />
+            <div class="flex flex-row justify-between">
+              <span>vegetation change</span
+              ><span class="text-white/70"
+                >land_cover_degradion_count 2010-2023, red => decrease, green => increase
+              </span>
+            </div>
+            <div class="bg-white h-[1px] w-full" />
+            <div class="flex flex-row justify-between">
+              <span class="w-110">animal GPP</span
+              ><span class="text-white/70"
+                >negative values of normalized differenz product of total_livestock_count x Biomass
+                degredation (2010-2020) (convoluted for smoothing)</span
+              >
+            </div>
+            <div class="bg-white h-[1px] w-full" />
+            <div class="flex flex-row justify-between">
+              <span class="w-110">animal desertification </span
+              ><span class="text-white/70"
+                >positive values of normalized pointwise difference product of total_livestock_count
+                x terrain_degredation (2010-2020) (convoluted for somoothing)
+              </span>
             </div>
           </div>
         </div>

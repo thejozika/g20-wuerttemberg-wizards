@@ -4,7 +4,7 @@ import { ref } from 'vue'
 
 const pos = ref(null)
 // This will track the currently open accordion panel (either 'box1' or 'box2')
-const activeAccordion = ref(null)
+const activeAccordion = ref('box1')
 
 function toggleAccordion(panel) {
   activeAccordion.value = activeAccordion.value === panel ? null : panel
@@ -43,7 +43,7 @@ function afterLeave(el) {
 
 <template>
   <div
-    class="bg-cover bg-bottom h-screen"
+    class="bg-cover bg-bottom min-h-screen"
     style="background-image: url('/desert-8460850_1920.jpg')"
   >
     <div class="bg-black/60 min-h-screen">
@@ -91,7 +91,7 @@ function afterLeave(el) {
               class="transition-all duration-300 bg-black border border-gold-dark rounded-lg p-5 hover:shadow-[inset_0px_0px_80px_-20px_rgba(255,209,0,0.5)]"
             >
               <h3 class="text-2xl mb-3">{{ pos?.title }}</h3>
-              <p v-if="activeAccordion !== 'box1'" class="text-white/80">learn more...</p>
+              <p v-if="activeAccordion !== 'box1'" class="text-white/80">{{ pos?.short }}</p>
               <transition
                 name="dynamic-height"
                 @before-enter="beforeEnter"

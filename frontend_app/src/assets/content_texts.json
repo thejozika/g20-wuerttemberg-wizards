@@ -2,7 +2,7 @@
   {
     "title": "Kiffa",
     "short": "Mauritania's Assaba capital, faces desertification, water scarcity, and overexploitation from a doubled population straining resources with hot, dry conditions (45°C, 200-300 mm rainfall), highlighting urgent needs for sustainable strategies.",
-    "content": "The capital of Mauritania's Assaba region is situated in the southern semi-arid zone, approximately 600 km from Nouakchott, enduring a hot, dry climate with temperatures reaching 45°C and minimal rainfall of 200-300 mm annually. Over the past two decades, its population has doubled, with 47% now under the age of 15, significantly straining scarce water resources and prompting agricultural expansion that depletes soil fertility and accelerates nutrient loss. This overexploitation exacerbates the region's susceptibility to desertification and climate change, compounding environmental pressures. These factors highlight the pressing need for sustainable strategies to mitigate water scarcity, land degradation, and the socio-economic burdens of a rapidly growing, youthful population.",
+    "content": "The capital of Mauritania's Assaba region is situated in the southern semi-arid zone, approximately 600 km from Nouakchott. you can see an timelapse that brings you right into the heart of Kiffa. Over the past two decades, the population here has doubled—with nearly half of the people under 15. You’ll notice how this rapid growth, combined with harsh conditions (up to 45°C and only 200-300 mm of rain per year), puts extra pressure on limited water supplies and infrastructure.",
     "lat": 16.619579678236377,
     "lng": -11.406211853027344,
     "zoom": 12,
@@ -25,9 +25,9 @@
     ]
   },
   {
-    "title": "Kiffa",
-    "short": "Mauritania's Assaba capital, faces desertification, water scarcity, and overexploitation from a doubled population straining resources with hot, dry conditions (45°C, 200-300 mm rainfall), highlighting urgent needs for sustainable strategies.",
-    "content": "The capital of Mauritania's Assaba region is situated in the southern semi-arid zone, approximately 600 km from Nouakchott, enduring a hot, dry climate with temperatures reaching 45°C and minimal rainfall of 200-300 mm annually. Over the past two decades, its population has doubled, with 47% now under the age of 15, significantly straining scarce water resources and prompting agricultural expansion that depletes soil fertility and accelerates nutrient loss. This overexploitation exacerbates the region's susceptibility to desertification and climate change, compounding environmental pressures. These factors highlight the pressing need for sustainable strategies to mitigate water scarcity, land degradation, and the socio-economic burdens of a rapidly growing, youthful population.",
+    "title": "Kiffa - Biomass and Livestock Correlation",
+    "short": "Decreasing biomass and rising livestock numbers reveal the challenges of unsustainable land use.",
+    "content": "Dive into a side-by-side view of Kiffa’s ecological dynamics. As you interact with the map, you’ll notice that as agricultural expansion depletes natural biomass, livestock numbers are on the rise. This imbalance is a clear sign of soil degradation and accelerated desertification, especially in a region known for its hot, dry climate and scarce rainfall.",
     "lat": 16.619579678236377,
     "lng": -11.406211853027344,
     "zoom": 9,
@@ -36,23 +36,23 @@
     ],
     "policies": [
       {
-        "title": "Combat water scarcity",
-        "content": "Introduce rainwater harvesting systems (e.g., Zai pits), as used successfully in Burkina Faso, to store rainfall efficiently and reduce reliance on overused groundwater."
+        "title": "Halt Soil Degradation",
+        "content": "We suggest promoting agroforestry with nitrogen-fixing trees like Faidherbia albida. This approach, inspired by Niger’s successful Farmer-Managed Natural Regeneration, can help restore soil fertility and reduce erosion."
       },
       {
-        "title": "Halt soil degradation and desertification",
-        "content": "Promote agroforestry with nitrogen-fixing trees like Faidherbia albida, inspired by Niger’s Farmer-Managed Natural Regeneration, to boost soil fertility and curb erosion."
+        "title": "Implement Sustainable Livestock Management",
+        "content": "Try adopting rotational grazing and better forage management techniques—methods proven in other Sahel projects—to balance livestock numbers with the natural recovery of vegetation."
       },
       {
-        "title": "Ease socio-economic strain from population growth",
-        "content": "Develop education and job programs for the youthful population similar to Senegal’s urban initiatives, to create opportunities and lessen resource pressure."
+        "title": "Pursue Integrated Land Restoration",
+        "content": "Consider launching integrated projects that combine reforestation with sustainable farming. Community-driven efforts like the Great Green Wall project offer excellent examples of restoring degraded lands."
       }
     ]
   },
   {
-    "title": "Aftout",
-    "short": "A southern Mauritanian region that faces desertification, water scarcity, and extreme weather cycles along with severe soil degradation due to overgrazing, threatening its seasonal agriculture like millet and transhumance of cattle and goats. These conditions underscore the urgent need for sustainable solutions.",
-    "content": "A low-lying region in south Mauritania, endures a semi-arid climate marked by extreme weather cycles, with flooding during the rainy season and severe droughts in the dry months, receiving erratic rainfall averaging 200-400 mm annually. Its economy relies on seasonal agriculture—cultivating crops like millet—and transhumance, the seasonal movement of livestock such as cattle and goats, both increasingly vulnerable to desertification and soil degradation that erode fertile land. Over the past two decades, these environmental pressures have intensified, accelerating water scarcity and reducing arable land, threatening traditional livelihoods. Culturally rooted in nomadic traditions, Aftout’s population maintains a mobile lifestyle despite limited access to education and healthcare. These conditions underscore the urgent need for sustainable solutions to combat droughts, restore degraded soils, and secure water resources for a resilient future.",
+    "title": "Aftout/Guerou",
+    "short": "Guerou and Aftout in central Assaba support small-scale farming amid desertification, relying on agriculture and artisanal mining that pollutes the environment, while their diverse cultures face high youth unemployment driving urban migration, marked by mining damage and job scarcity.",
+    "content": "Guerou and Aftout, located in central Assaba, feature rugged rocky plateaus, highlands, and seasonal rivers that support small-scale farming despite intensifying desertification. Both communities depend on subsistence agriculture and artisanal mining, with mining activities contributing to water and soil contamination. Over the last 20 years, a surge in livestock has further degraded the land, adding to the environmental challenges. Despite their ethnically diverse cultural backgrounds, both towns face high youth unemployment, which spurs migration to urban centers. You are encouraged to investigate the long-term development of livestock to better understand its impact on land degradation.",
     "lat": 16.646718050971934,
     "lng": -12.24700927734375,
     "zoom": 9,
@@ -61,42 +61,42 @@
     ],
     "policies": [
       {
-        "title": "Mitigate extreme weather cycles and water scarcity",
-        "content": "Implement small-scale dams and water retention basins, as successfully used in Chad, to capture floodwater during the rainy season and store it for use during droughts."
+        "title": "Agroforestry Systems:",
+        "content": "Integrating drought-resistant trees with crops, as seen in Niger’s Sahel region, could combat desertification in Guerou by stabilizing soil and boosting farm yields, while creating jobs for youth in planting and maintenance."
       },
       {
-        "title": "Counter desertification and soil degradation",
-        "content": "Promote reforestation with drought-resistant species like Acacia, inspired by the Great Green Wall in the Sahel, to stabilize soils and restore degraded land."
+        "title": "Mining Regulation and Cleanup:",
+        "content": " Drawing from Ghana’s artisanal mining reforms, enforcing stricter environmental standards and using simple bioremediation techniques (e.g., planting vetiver grass) could reduce pollution in Guerou, with youth trained to monitor and restore affected areas."
       },
       {
-        "title": "Support threatened livelihoods",
-        "content": "Introduce mobile water tanks for transhumant herders, similar to solutions in Niger, to ensure livestock access to water and sustain traditional nomadic practices."
+        "title": "Vocational Training Hubs:",
+        "content": "nspired by Senegal’s rural skills programs, establishing local centers to teach trades like solar panel repair or sustainable farming could curb youth unemployment in Guerou, keeping talent in the region rather than losing it to urban migration."
       }
     ]
   },
   {
-    "title": "Aftout",
-    "short": "Boumdeid (Arabic: بومديد) is a town and commune in Mauritania.",
-    "content": "Besides of it being the birthplace of Mauritanian president Mohamed Ould Ghazouani. you can see from the data that there is a lot vegetation coming back",
-    "lat": 17.345266640531523,
-    "lng": -11.390027524607412,
-    "zoom": 11,
-    "layers": [
-      "vegetation_change"
-    ],
-    "policies": [
-      {
-        "title": "Mitigate extreme weather cycles and water scarcity",
-        "content": "Implement small-scale dams and water retention basins, as successfully used in Chad, to capture floodwater during the rainy season and store it for use during droughts."
-      },
-      {
-        "title": "Counter desertification and soil degradation",
-        "content": "Promote reforestation with drought-resistant species like Acacia, inspired by the Great Green Wall in the Sahel, to stabilize soils and restore degraded land."
-      },
-      {
-        "title": "Support threatened livelihoods",
-        "content": "Introduce mobile water tanks for transhumant herders, similar to solutions in Niger, to ensure livestock access to water and sustain traditional nomadic practices."
-      }
-    ]
-  }
+  "title": "Boumdeid",
+  "short": "A remote Sahel town in Mauritania’s hilly Assaba region, dependent on subsistence agriculture and facing harsh environmental challenges.",
+  "content": "Boumdeid, a remote town nestled in the hilly Assaba region of Mauritania, lies in the semi-arid Sahel, where sparse vegetation and scarce water sources shape a stark landscape. Its economy rests on subsistence agriculture—mainly millet farming and livestock rearing—and small-scale trade with nearby communities, yet persistent drought and creeping desertification threaten livelihoods and limit growth. The predominantly rural population, bound by strong community ties across diverse ethnic groups, faces significant barriers due to limited access to education and healthcare. Its geographic isolation deepens disconnection from economic opportunities and essential services, leaving it exposed to the Sahel’s harsh environmental shifts. Additionally, Boumdeid is known as the birthplace of Mauritanian president Mohamed Ould Ghazouani.",
+  "lat": 17.345266640531523,
+  "lng": -11.390027524607412,
+  "zoom": 11,
+  "layers": [
+    "vegetation_change"
+  ],
+  "policies": [
+    {
+      "title": "Community Reforestation",
+      "content": "Inspired by Burkina Faso’s FMNR, residents could protect and regrow native shrubs and trees to combat desertification and retain soil moisture against drought, leveraging strong community bonds for sustained effort."
+    },
+    {
+      "title": "Mobile Service Units",
+      "content": "Following Mali’s model, solar-powered mobile units staffed with nurses and teachers could overcome geographic isolation by delivering essential healthcare and basic education to rural populations."
+    },
+    {
+      "title": "Rainwater Harvesting",
+      "content": "Adopting Niger’s approach with simple stone bunds and pits, Boumdeid could harvest scarce rainfall to support subsistence farming and livestock, addressing water scarcity in its drought-prone environment."
+    }
+  ]
+}
 ]

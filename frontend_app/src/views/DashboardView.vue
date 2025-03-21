@@ -156,6 +156,10 @@ function afterLeave(el) {
           <div
             class="col-span-3 flex flex-col gap-2 transition-all duration-300 bg-black border border-gold-dark rounded-lg p-5 hover:shadow-[inset_0px_0px_80px_-20px_rgba(255,209,0,0.5)]"
           >
+          <div class="flex flex-row justify-between">
+              <span>Land Type</span><span class="text-white/70">Green grasslands / Off-white barren land</span>
+            </div>
+            <div class="bg-white h-[1px] w-full" />
             <div class="flex flex-row justify-between">
               <span>Biomass</span><span class="text-white/70">kg_C/m^2/year</span>
             </div>

@@ -32,7 +32,7 @@
     "lng": -11.406211853027344,
     "zoom": 9,
     "layers": [
-      "population"
+      "animal_gpp"
     ],
     "policies": [
       {
@@ -57,7 +57,8 @@
     "lng": -12.24700927734375,
     "zoom": 9,
     "layers": [
-      "Assaba_Region_layer"
+      "Assaba_Region_layer",
+      "animal_desertification"
     ],
     "policies": [
       {

@@ -168,7 +168,12 @@ onMounted(() => {
   L.control.layers(null, overlayMaps, { collapsed: false }).addTo(map)
 
   map.on('moveend', (e) => {
-    console.log(map.getBounds().getNorthEast(), map.getCenter(), map.getZoom())
+    console.log(
+      map.getBounds().getNorthEast(),
+      map.getBounds().getSouthWest(),
+      map.getCenter(),
+      map.getZoom(),
+    )
 
     Object.keys(cutout).forEach((t) => {
       if (!blockedCutouts.includes(t)) {
